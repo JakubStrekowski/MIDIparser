@@ -12,6 +12,8 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using Microsoft.Win32;
+using MIDIparser.ViewModels;
 
 namespace MIDIparser
 {
@@ -20,9 +22,17 @@ namespace MIDIparser
     /// </summary>
     public partial class MainWindow : Window
     {
+        private readonly MainWindowViewModel _viewModel;
+         
+
         public MainWindow()
         {
+            DataContext = _viewModel;
+            _viewModel = new MainWindowViewModel();
             InitializeComponent();
+            // The DataContext serves as the starting point of Binding Paths
         }
+
     }
+
 }

@@ -3,9 +3,14 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:MIDIparser"
+        xmlns:localVm="clr-namespace:MIDIparser.ViewModels"
+        xmlns:diag="clr-namespace:System.Diagnostics;assembly=WindowsBase"
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
+
+    <Window.DataContext>
+        <localVm:MainWindowViewModel/>
+    </Window.DataContext>
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition MinWidth="50px"/>
@@ -34,11 +39,10 @@
             </Grid>
         </Grid>
         <DockPanel Grid.Row="0" Grid.ColumnSpan="3">
-            <Menu DockPanel.Dock="Top">
+            <Menu DockPanel.Dock="Top" >
                 <MenuItem Header="_File">
-                    <MenuItem Header="_New" />
-                    <MenuItem Header="_Open" />
-                    <MenuItem Header="_Save" />
+                    <MenuItem Header="Open" Command="{Binding CmdOpenFileClick, diag:PresentationTraceSources.TraceLevel=High}"/>
+                    <MenuItem Header="Main" />
                     <Separator />
                     <MenuItem Header="_Exit" />
                 </MenuItem>
