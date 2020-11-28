@@ -28,7 +28,7 @@
             </Grid.RowDefinitions>
             <Grid>
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="1*"/>
+                    <ColumnDefinition Width="auto"/>
                     <ColumnDefinition Width="4*"/>
                 </Grid.ColumnDefinitions>
                 <Grid.RowDefinitions>
@@ -36,6 +36,11 @@
                     <RowDefinition />
                     <RowDefinition />
                 </Grid.RowDefinitions>
+                <StackPanel Orientation="Horizontal">
+                    <ComboBox Name="CurrectTrackComboBox" Margin="5" Height="35px" Width="150px" Padding="10" ItemsSource="{Binding ChannelTitles}" SelectedItem="{Binding SelectedChannel}">
+                    </ComboBox>
+                    <Button Name="RefreshChannelBtn" Width="35px" Height="35px" Padding="10" Command="{Binding CmdChangeChannelClick}"></Button>
+                </StackPanel>
             </Grid>
         </Grid>
         <DockPanel Grid.Row="0" Grid.ColumnSpan="3">
@@ -51,9 +56,9 @@
         </DockPanel>
         <GridSplitter Grid.Row="1" Grid.Column="1" Width="5" HorizontalAlignment="Stretch" />
         <Border Grid.Row="1" Padding="1" BorderThickness="1" BorderBrush="Gray">
-            <TextBlock Text="Lorem ipsum">
-                
-            </TextBlock>
+            <ScrollViewer>
+                <TextBlock Name="ParsedNotesTxt" Text="{Binding ParsedNotes}"/>
+            </ScrollViewer>
         </Border>
     </Grid>
 </Window>

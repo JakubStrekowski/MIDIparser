@@ -15,6 +15,7 @@ using System.Windows.Shapes;
 using Microsoft.Win32;
 using MIDIparser.ViewModels;
 
+
 namespace MIDIparser
 {
     /// <summary>

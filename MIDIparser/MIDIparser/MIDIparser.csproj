@@ -38,6 +38,9 @@
     <Reference Include="Melanchall.DryWetMidi, Version=5.1.2.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Melanchall.DryWetMidi.5.1.2\lib\net45\Melanchall.DryWetMidi.dll</HintPath>
     </Reference>
+    <Reference Include="Microsoft.Xaml.Behaviors, Version=1.1.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Xaml.Behaviors.Wpf.1.1.19\lib\net45\Microsoft.Xaml.Behaviors.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
@@ -60,6 +63,7 @@
     </ApplicationDefinition>
     <Compile Include="EventArgs.cs" />
     <Compile Include="EventRaiser.cs" />
+    <Compile Include="Helpers\MidiEventsToTextParser.cs" />
     <Compile Include="ViewModels\MainWindowViewModel.cs" />
     <Page Include="Views\MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>

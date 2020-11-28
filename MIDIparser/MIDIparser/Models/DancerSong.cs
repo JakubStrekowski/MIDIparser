@@ -9,7 +9,7 @@ namespace MIDIparser.Models
 {
     class DancerSong
     {
-        public MidiFile midi;
-
+        public MidiFile midi; //unparsed midi events
+        public string musicFilePath; //path to a music file
     }
 }
