@@ -15,6 +15,8 @@ namespace MIDIparser.Helpers
         private string parsedString;
         private List<string> parsedStringByChannel;
         private Collection<string> channelTitles;
+
+        public List<IEnumerable<Note>> NotesInChannel { get; protected set; }
         public string ParsedString
         {
             get
@@ -38,12 +40,14 @@ namespace MIDIparser.Helpers
             parsedString = "";
             parsedStringByChannel = new List<string>();
             ChannelTitles = new Collection<string>();
+            NotesInChannel = new List<IEnumerable<Note>>();
         }
 
         public string ParseFromMidFormat(MidiFile midiFile)
         {
             parsedStringByChannel.Clear();
             ChannelTitles.Clear();
+            NotesInChannel.Clear();
             int noteCount = 0;
             parsedString = "";
             IEnumerable<Note> notes = midiFile.GetNotes();
@@ -56,12 +60,16 @@ namespace MIDIparser.Helpers
             }
             IEnumerable<FourBitNumber> channels = midiFile.GetChannels();
 
+            ChannelTitles.Add("All channels");
+            parsedStringByChannel.Add(parsedString);
+            NotesInChannel.Add(notes);
             int channelNumber = 0;
             foreach(FourBitNumber channel in channels)
             {
                 parsedStringByChannel.Add("");
                 ChannelTitles.Add("Channel " + (channelNumber + 1));
-                IEnumerable<Note> notesInChannel = midiFile.GetNotes().Where(x => x.Channel == channel);
+                IEnumerable<Note>notesInChannel = midiFile.GetNotes().Where(x => x.Channel == channel);
+                NotesInChannel.Add(notesInChannel);
                 noteCount = 0;
                 foreach (Note note in notesInChannel)
                 {

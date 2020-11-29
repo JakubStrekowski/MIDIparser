@@ -6,7 +6,7 @@
         xmlns:localVm="clr-namespace:MIDIparser.ViewModels"
         xmlns:diag="clr-namespace:System.Diagnostics;assembly=WindowsBase"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+        Title="MIDI parser" Height="450" Width="800">
 
     <Window.DataContext>
         <localVm:MainWindowViewModel/>
@@ -37,9 +37,12 @@
                     <RowDefinition />
                 </Grid.RowDefinitions>
                 <StackPanel Orientation="Horizontal">
-                    <ComboBox Name="CurrectTrackComboBox" Margin="5" Height="35px" Width="150px" Padding="10" ItemsSource="{Binding ChannelTitles}" SelectedItem="{Binding SelectedChannel}">
+                    <ComboBox Name="CurrectTrackComboBox" Margin="5" Height="35px" Width="150px" ItemsSource="{Binding ChannelTitles}" SelectedItem="{Binding SelectedChannel}">
                     </ComboBox>
-                    <Button Name="RefreshChannelBtn" Width="35px" Height="35px" Padding="10" Command="{Binding CmdChangeChannelClick}"></Button>
+                </StackPanel>
+                <StackPanel Grid.Row="1" Orientation="Horizontal">
+                    <Button Content="Play midi channel" Name="PlayMidiBtn"  Height="35px" Margin="5" Command="{Binding CmdPlayMidiClick}"></Button>
+                    <Button Content="Stop playing" Name="StopMidiBtn"  Height="35px" Margin="5" Command="{Binding CmdStopMidiClick}"></Button>
                 </StackPanel>
             </Grid>
         </Grid>
@@ -57,7 +60,25 @@
         <GridSplitter Grid.Row="1" Grid.Column="1" Width="5" HorizontalAlignment="Stretch" />
         <Border Grid.Row="1" Padding="1" BorderThickness="1" BorderBrush="Gray">
             <ScrollViewer>
-                <TextBlock Name="ParsedNotesTxt" Text="{Binding ParsedNotes}"/>
+                <!--<TextBlock Name="ParsedNotesTxt" Text="{Binding ParsedNotes}"/>-->
+                <ListView Name="ParsedNotesListBox" ItemsSource="{Binding PresentedNotes}">
+                    <ListView.ItemTemplate>
+                        <DataTemplate>
+                            <Grid Margin="0,2">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" MinWidth="100px" />
+                                    <ColumnDefinition Width="40px" />
+                                    <ColumnDefinition Width="90px" />
+                                    <ColumnDefinition Width="90px" />
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Grid.Column="0" Text="{Binding NoteName}" />
+                                <TextBlock Grid.Column="1" Text="{Binding Octave}" />
+                                <TextBlock Grid.Column="2" Text="{Binding Time}" />
+                                <TextBlock Grid.Column="3" Text="{Binding Length}" />
+                            </Grid>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                </ListView>
             </ScrollViewer>
         </Border>
     </Grid>
