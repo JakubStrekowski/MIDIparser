@@ -13,8 +13,8 @@ namespace MIDIparser.Helpers
     class MidiEventsToTextParser
     {
         private string parsedString;
-        private List<string> parsedStringByChannel;
-        private Collection<string> channelTitles;
+        private readonly List<string> parsedStringByChannel;
+        private ObservableCollection<string> channelTitles;
 
         public List<IEnumerable<Note>> NotesInChannel { get; protected set; }
         public string ParsedString
@@ -29,7 +29,7 @@ namespace MIDIparser.Helpers
                 parsedString = value;
             }
         }
-        public Collection<string> ChannelTitles
+        public ObservableCollection<string> ChannelTitles
         {
             get { return channelTitles; }
             private set { channelTitles = value; }
@@ -39,7 +39,7 @@ namespace MIDIparser.Helpers
         {
             parsedString = "";
             parsedStringByChannel = new List<string>();
-            ChannelTitles = new Collection<string>();
+            ChannelTitles = new ObservableCollection<string>();
             NotesInChannel = new List<IEnumerable<Note>>();
         }
 

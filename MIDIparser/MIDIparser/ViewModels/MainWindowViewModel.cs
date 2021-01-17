@@ -20,18 +20,20 @@ namespace MIDIparser.ViewModels
 {
     class MainWindowViewModel : INotifyPropertyChanged
     {
-        private MidiEventsToTextParser _midiEventsTextParser;
+        private readonly MidiEventsToTextParser _midiEventsTextParser;
         private DancerSong _dancerSong;
 
 
-        private OutputDevice currentlyPlayingDevice;
         private IEnumerable<MidiFile> midiChannels;
         private IEnumerable<Note> presentedNotes;
-        private Collection<string> channelTitles;
+        private Note selectedNote;
+        private ObservableCollection<Note> selectedNotes;
+        private ObservableCollection<string> channelTitles;
         private string parsedNotes;
         private string selectedChannel;
         private int channelId;
 
+        private OutputDevice currentlyPlayingDevice;
         private Playback playback;
 
         public string ParsedNotes
@@ -43,7 +45,7 @@ namespace MIDIparser.ViewModels
                 OnPropertyChange("ParsedNotes");
             }
         }
-        public Collection<string> ChannelTitles
+        public ObservableCollection<string> ChannelTitles
         {
             get { return channelTitles; }
             set
@@ -61,11 +63,40 @@ namespace MIDIparser.ViewModels
                 OnPropertyChange("PresentedNotes");
             }
         }
+        public Note SelectedNote
+        {
+            get { return selectedNote; }
+            set
+            {
+                selectedNote = value;
+                OnPropertyChange("SelectedNote");
+            }
+        }
+
+        public ObservableCollection<Note> SelectedNotes
+        {
+            get
+            {
+                return selectedNotes;
+            }
+            set
+            {
+
+                (selectedNotes as Collection<Note>).Clear();
+                foreach (Note model in value)
+                {
+                    (selectedNotes as Collection<Note>).Add(model);
+                }
+                OnPropertyChange("SelectedNotes");
+            }
+        }
 
         public string SelectedChannel
         {
             get { return selectedChannel; }
-            set { 
+            set
+            {
+                SelectedNote = null;
                 selectedChannel = value;
                 OnPropertyChange("SelectedChannel");
                 ChangeChannel();
@@ -80,7 +111,8 @@ namespace MIDIparser.ViewModels
         #region commands
         private ICommand _cmdOpenFileClick;
         private ICommand _cmdPlayMidiClick;
-        private ICommand _cmdStopidiClick;
+        private ICommand _cmdStopMidiClick;
+        private ICommand _cmdPauseMidiClick;
 
         public ICommand CmdOpenFileClick
         {
@@ -88,7 +120,7 @@ namespace MIDIparser.ViewModels
             {
                 if (_cmdOpenFileClick == null)
                 {
-                    _cmdOpenFileClick = new RelayCommand<ICommand>(x => OpenMidiFile(x));
+                    _cmdOpenFileClick = new RelayCommand<ICommand>(x => OpenMidiFile());
                 }
                 return _cmdOpenFileClick;
             }
@@ -99,7 +131,7 @@ namespace MIDIparser.ViewModels
             {
                 if (_cmdPlayMidiClick == null)
                 {
-                    _cmdPlayMidiClick = new RelayCommand<ICommand>(x => PlayMidiFile(x));
+                    _cmdPlayMidiClick = new RelayCommand<ICommand>(x => PlayMidiFile());
                 }
                 return _cmdPlayMidiClick;
             }
@@ -108,17 +140,28 @@ namespace MIDIparser.ViewModels
         {
             get
             {
-                if (_cmdStopidiClick == null)
+                if (_cmdStopMidiClick == null)
                 {
-                    _cmdStopidiClick = new RelayCommand<ICommand>(x => StopPlayMidiFile());
+                    _cmdStopMidiClick = new RelayCommand<ICommand>(x => StopPlayMidiFile());
                 }
-                return _cmdStopidiClick;
+                return _cmdStopMidiClick;
+            }
+        }
+        public ICommand CmdPauseMidiClick
+        {
+            get
+            {
+                if (_cmdPauseMidiClick == null)
+                {
+                    _cmdPauseMidiClick = new RelayCommand<ICommand>(x => PausePlayMidiFile());
+                }
+                return _cmdPauseMidiClick;
             }
         }
         #endregion
 
         #region commandMethods
-        private void OpenMidiFile(object item)
+        private void OpenMidiFile()
         {
             _dancerSong = new DancerSong();
             OpenFileDialog openFileDialog = new OpenFileDialog
@@ -128,18 +171,22 @@ namespace MIDIparser.ViewModels
             };
             if (openFileDialog.ShowDialog() == true)
             {
+                SelectedNote = null;
                 _dancerSong.midi = MidiFile.Read(openFileDialog.FileName);
                 ParsedNotes=_midiEventsTextParser.ParseFromMidFormat(_dancerSong.midi);
                 channelId = 0;
                 ChannelTitles = _midiEventsTextParser.ChannelTitles;
                 PresentedNotes = _midiEventsTextParser.NotesInChannel[0];
+                selectedNotes = new ObservableCollection<Note>();
                 SplitByChannels();
+                SelectedChannel = "All channels";
             }
         }
 
         private void ChangeChannel()
         {
-            if(string.Equals(SelectedChannel, "All channels"))
+            SelectedNote = null;
+            if (string.Equals(SelectedChannel, "All channels"))
             {
                 channelId = 0;
             }
@@ -149,6 +196,26 @@ namespace MIDIparser.ViewModels
             }
             ParsedNotes = _midiEventsTextParser.GetNotesOfChannel(channelId);
             PresentedNotes = _midiEventsTextParser.NotesInChannel[channelId];
+
+            currentlyPlayingDevice?.Dispose();
+            if (playback != null)
+            {
+                PlaybackCurrentTimeWatcher.Instance.RemoveAllPlaybacks();
+                PlaybackCurrentTimeWatcher.Instance.CurrentTimeChanged -= OnCurrentTimeChanged;
+            }
+             playback?.Dispose();
+
+            currentlyPlayingDevice = OutputDevice.GetByName("Microsoft GS Wavetable Synth");
+            if (channelId == 0)
+            {
+                playback = _dancerSong.midi.GetPlayback(currentlyPlayingDevice);
+            }
+            else
+            {
+                playback = midiChannels.ToArray()[channelId].GetPlayback(currentlyPlayingDevice);
+            }
+            PlaybackCurrentTimeWatcher.Instance.AddPlayback(playback, TimeSpanType.Midi);
+            PlaybackCurrentTimeWatcher.Instance.CurrentTimeChanged += OnCurrentTimeChanged;
         }
 
         private void SplitByChannels()
@@ -156,7 +223,7 @@ namespace MIDIparser.ViewModels
             midiChannels = _dancerSong.midi.SplitByChannel();
         }
 
-        private void PlayMidiFile(object item)
+        private void PlayMidiFile()
         {
             Task.Run(StartPlayingMidi);
         }
@@ -167,11 +234,32 @@ namespace MIDIparser.ViewModels
             {
                 if(playback.IsRunning)
                 playback.Stop();
+                playback.MoveToStart();
+                PlaybackCurrentTimeWatcher.Instance.Stop();
+            }
+        }
+        private void PausePlayMidiFile()
+        {
+            if (playback != null && currentlyPlayingDevice != null)
+            {
+                if (playback.IsRunning)
+                {
+                    playback.Stop();
+                    PlaybackCurrentTimeWatcher.Instance.Stop();
+                }
             }
         }
 
         private async void StartPlayingMidi()
         {
+
+            if (playback != null)
+            {
+                if (playback.IsRunning)
+                {
+                    return;
+                }
+            }
             if (midiChannels == null)
             {
                 MessageBox.Show("MIDI file was not splitted by channels.");
@@ -179,33 +267,45 @@ namespace MIDIparser.ViewModels
             }
             try
             {
-                currentlyPlayingDevice = OutputDevice.GetByName("Microsoft GS Wavetable Synth");
-                if (channelId == 0)
-                {
-                    playback = _dancerSong.midi.GetPlayback(currentlyPlayingDevice);
-                }
-                else
-                {
-                    playback = midiChannels.ToArray()[channelId - 1].GetPlayback(currentlyPlayingDevice);
-                }
                 if (!playback.IsRunning && currentlyPlayingDevice != null)
                 {
                     playback.InterruptNotesOnStop = true;
                     playback.Start();
+                    PlaybackCurrentTimeWatcher.Instance.Start();
                     while (playback.IsRunning)
                     {
                         Thread.Sleep(1000);
                     }
                 }
-                currentlyPlayingDevice.Dispose();
-                playback.Dispose();
+                
             }
             catch(Exception ex)
             {
                 MessageBox.Show(ex.Message);
             }
-
         }
+
+        private void OnCurrentTimeChanged(object sender, PlaybackCurrentTimeChangedEventArgs e)
+        {
+            foreach (var playbackTime in e.Times)
+            {
+                var time = (MidiTimeSpan)playbackTime.Time;
+
+                ObservableCollection<Note> tempColl = new ObservableCollection<Note>();
+
+                foreach (Note n in presentedNotes)
+                {
+                    if(n.Time> time.TimeSpan && time.TimeSpan < n.Time + n.Length)
+                    {
+                        SelectedNote = n; break;
+                    }
+                }
+
+                Console.WriteLine($"Current time is {time}.");
+            }
+        }
+
+
         #endregion
 
 

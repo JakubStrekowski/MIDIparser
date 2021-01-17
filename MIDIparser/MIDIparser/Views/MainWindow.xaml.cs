@@ -33,7 +33,17 @@ namespace MIDIparser
             InitializeComponent();
             // The DataContext serves as the starting point of Binding Paths
         }
+        private void ListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            try
+            {
+                ((ListBox)sender).ScrollIntoView(e.AddedItems[0]);
+            }
+            catch (IndexOutOfRangeException)
+            {
 
+            }
+        }
     }
 
 }

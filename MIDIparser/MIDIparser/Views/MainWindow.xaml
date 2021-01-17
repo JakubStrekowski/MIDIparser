@@ -5,6 +5,8 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:localVm="clr-namespace:MIDIparser.ViewModels"
         xmlns:diag="clr-namespace:System.Diagnostics;assembly=WindowsBase"
+        xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
+        xmlns:ei="http://schemas.microsoft.com/expression/2010/interactions"
         mc:Ignorable="d"
         Title="MIDI parser" Height="450" Width="800">
 
@@ -43,6 +45,7 @@
                 <StackPanel Grid.Row="1" Orientation="Horizontal">
                     <Button Content="Play midi channel" Name="PlayMidiBtn"  Height="35px" Margin="5" Command="{Binding CmdPlayMidiClick}"></Button>
                     <Button Content="Stop playing" Name="StopMidiBtn"  Height="35px" Margin="5" Command="{Binding CmdStopMidiClick}"></Button>
+                    <Button Content="Pause playing" Name="PauseMidiBtn"  Height="35px" Margin="5" Command="{Binding CmdPauseMidiClick}"></Button>
                 </StackPanel>
             </Grid>
         </Grid>
@@ -61,7 +64,7 @@
         <Border Grid.Row="1" Padding="1" BorderThickness="1" BorderBrush="Gray">
             <ScrollViewer>
                 <!--<TextBlock Name="ParsedNotesTxt" Text="{Binding ParsedNotes}"/>-->
-                <ListView Name="ParsedNotesListBox" ItemsSource="{Binding PresentedNotes}">
+                <ListView Name="ParsedNotesListBox" ItemsSource="{Binding PresentedNotes}" SelectionMode="Extended" SelectedItem="{Binding SelectedNote}" SelectionChanged="ListBox_SelectionChanged">
                     <ListView.ItemTemplate>
                         <DataTemplate>
                             <Grid Margin="0,2">
@@ -78,6 +81,11 @@
                             </Grid>
                         </DataTemplate>
                     </ListView.ItemTemplate>
+                    <ListView.ItemContainerStyle>
+                        <Style TargetType="ListViewItem">
+                            <Setter Property="IsHitTestVisible" Value="False"/>
+                        </Style>
+                    </ListView.ItemContainerStyle>
                 </ListView>
             </ScrollViewer>
         </Border>
