@@ -35,17 +35,27 @@
                 </Grid.ColumnDefinitions>
                 <Grid.RowDefinitions>
                     <RowDefinition />
-                    <RowDefinition />
+                    <RowDefinition  Height="80px"/>
                     <RowDefinition />
                 </Grid.RowDefinitions>
                 <StackPanel Orientation="Horizontal">
                     <ComboBox Name="CurrectTrackComboBox" Margin="5" Height="35px" Width="150px" ItemsSource="{Binding ChannelTitles}" SelectedItem="{Binding SelectedChannel}">
                     </ComboBox>
                 </StackPanel>
-                <StackPanel Grid.Row="1" Orientation="Horizontal">
-                    <Button Content="Play midi channel" Name="PlayMidiBtn"  Height="35px" Margin="5" Command="{Binding CmdPlayMidiClick}"></Button>
-                    <Button Content="Stop playing" Name="StopMidiBtn"  Height="35px" Margin="5" Command="{Binding CmdStopMidiClick}"></Button>
-                    <Button Content="Pause playing" Name="PauseMidiBtn"  Height="35px" Margin="5" Command="{Binding CmdPauseMidiClick}"></Button>
+                <StackPanel Grid.Row="1" Orientation="Vertical">
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                        <Button Name="PlayMidiBtn"  Height="35px" Margin="5" Command="{Binding CmdPlayMidiClick}">
+                            <Image Source="/Resources/button_blue_play.png"></Image>
+                        </Button>
+                        <Button Name="StopMidiBtn"  Height="35px" Margin="5" Command="{Binding CmdStopMidiClick}">
+                            <Image Source="/Resources/button_blue_stop.png"></Image>
+                        </Button>
+                        <Button Name="PauseMidiBtn"  Height="35px" Margin="5" Command="{Binding CmdPauseMidiClick}">
+                            <Image Source="/Resources/button_blue_pause.png"></Image>
+                        </Button>
+                    </StackPanel>
+                    <TextBlock HorizontalAlignment="Center" Text="{Binding CurrentSongPlayTime}" />
+                    <Slider Margin="10 0 10 0"  Value="{Binding SongPercentPlayed}" Background="LightBlue" Maximum="100"/>
                 </StackPanel>
             </Grid>
         </Grid>

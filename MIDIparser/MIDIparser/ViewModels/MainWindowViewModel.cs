@@ -32,6 +32,7 @@ namespace MIDIparser.ViewModels
         private string parsedNotes;
         private string selectedChannel;
         private int channelId;
+        private float songPercentPlayed;
 
         private OutputDevice currentlyPlayingDevice;
         private Playback playback;
@@ -100,6 +101,46 @@ namespace MIDIparser.ViewModels
                 selectedChannel = value;
                 OnPropertyChange("SelectedChannel");
                 ChangeChannel();
+            }
+        }
+
+        public string CurrentSongPlayTime
+        {
+            get
+            {
+                if(playback == null)
+                {
+                    return "00:00:00 - 00:00:00";
+                }
+                else
+                {
+                    return playback.GetCurrentTime(TimeSpanType.Metric).ToString() + " - " + playback.GetDuration(TimeSpanType.Metric).ToString();
+                }
+            }
+        }
+
+        public float SongPercentPlayed
+        {
+            get
+            {
+                if (playback == null)
+                    return 0;
+                else
+                { 
+                    return songPercentPlayed;
+                }
+            }
+            set
+            {
+                if (playback == null)
+                    return;
+                else
+                {
+                    songPercentPlayed = value;
+                    MusicalTimeSpan newTime = TimeConverter.ConvertTo<MusicalTimeSpan>((long)(((float)Convert.ToSingle(TimeConverter.ConvertFrom(playback.GetDuration(TimeSpanType.Midi), playback.TempoMap))) * songPercentPlayed/100f), playback.TempoMap);
+                    playback.MoveToTime(newTime);
+                    OnPropertyChange("SongPercentPlayed");
+                }
             }
         }
 
@@ -216,6 +257,7 @@ namespace MIDIparser.ViewModels
             }
             PlaybackCurrentTimeWatcher.Instance.AddPlayback(playback, TimeSpanType.Midi);
             PlaybackCurrentTimeWatcher.Instance.CurrentTimeChanged += OnCurrentTimeChanged;
+            OnPropertyChange("CurrentSongPlayTime");
         }
 
         private void SplitByChannels()
@@ -275,6 +317,8 @@ namespace MIDIparser.ViewModels
                     while (playback.IsRunning)
                     {
                         Thread.Sleep(1000);
+                        songPercentPlayed = (float)Convert.ToSingle(TimeConverter.ConvertFrom(playback.GetCurrentTime(TimeSpanType.Midi), playback.TempoMap)) / (float)Convert.ToSingle(TimeConverter.ConvertFrom(playback.GetDuration(TimeSpanType.Midi) , playback.TempoMap) / 100f);
+                        OnPropertyChange("SongPercentPlayed");
                     }
                 }
                 
@@ -301,6 +345,7 @@ namespace MIDIparser.ViewModels
                     }
                 }
 
+                OnPropertyChange("CurrentSongPlayTime");
                 Console.WriteLine($"Current time is {time}.");
             }
         }
