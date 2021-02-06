@@ -253,7 +253,7 @@ namespace MIDIparser.ViewModels
             }
             else
             {
-                playback = midiChannels.ToArray()[channelId].GetPlayback(currentlyPlayingDevice);
+                playback = midiChannels.ToArray()[channelId-1].GetPlayback(currentlyPlayingDevice);
             }
             PlaybackCurrentTimeWatcher.Instance.AddPlayback(playback, TimeSpanType.Midi);
             PlaybackCurrentTimeWatcher.Instance.CurrentTimeChanged += OnCurrentTimeChanged;
@@ -334,8 +334,6 @@ namespace MIDIparser.ViewModels
             foreach (var playbackTime in e.Times)
             {
                 var time = (MidiTimeSpan)playbackTime.Time;
-
-                ObservableCollection<Note> tempColl = new ObservableCollection<Note>();
 
                 foreach (Note n in presentedNotes)
                 {

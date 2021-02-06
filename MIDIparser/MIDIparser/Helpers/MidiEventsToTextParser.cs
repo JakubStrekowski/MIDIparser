@@ -63,11 +63,11 @@ namespace MIDIparser.Helpers
             ChannelTitles.Add("All channels");
             parsedStringByChannel.Add(parsedString);
             NotesInChannel.Add(notes);
-            int channelNumber = 0;
+            int channelNumber = 1;
             foreach(FourBitNumber channel in channels)
             {
                 parsedStringByChannel.Add("");
-                ChannelTitles.Add("Channel " + (channelNumber + 1));
+                ChannelTitles.Add("Channel " + (channelNumber));
                 IEnumerable<Note>notesInChannel = midiFile.GetNotes().Where(x => x.Channel == channel);
                 NotesInChannel.Add(notesInChannel);
                 noteCount = 0;
