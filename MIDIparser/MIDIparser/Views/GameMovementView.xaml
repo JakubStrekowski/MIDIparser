@@ -36,8 +36,8 @@
         <Border Grid.Row="3" BorderBrush="Black" BorderThickness="1" Padding="0 1 0 0">
             <Image  Source="/Resources/Arrows/ArrowDOWN.png"></Image>
         </Border>
-        <ScrollViewer Grid.Column="1" Grid.RowSpan="5" HorizontalScrollBarVisibility="Visible" VerticalScrollBarVisibility="Hidden" Height="180px">
-            <Canvas x:Name="PlayerMovementCanvas" Width="{Binding SongLength}" Height="160px" VerticalAlignment="Top">
+        <ScrollViewer x:Name="MainScrollView" Grid.Column="1" Grid.RowSpan="5" HorizontalScrollBarVisibility="Visible" VerticalScrollBarVisibility="Hidden" Height="180px" Width="auto">
+            <Canvas x:Name="PlayerMovementCanvas" Width="{Binding SongLength}" Height="160px" VerticalAlignment="Top" HorizontalAlignment="Left">
                 <Line X1='0'
                  X2='{Binding ActualWidth, Mode=OneWay, 
                  RelativeSource={RelativeSource AncestorType=Canvas, Mode=FindAncestor}}'
@@ -46,7 +46,7 @@
                  Stroke="Gray"
                  StrokeThickness='1' />
 
-                <Line X1='{Binding CurrentSongPosition}'
+                <Line x:Name="SongCursor" X1='{Binding CurrentSongPosition}'
                  X2='{Binding CurrentSongPosition}'
                  Y1='0' 
                  Y2='{Binding ActualHeight, Mode=OneWay, 

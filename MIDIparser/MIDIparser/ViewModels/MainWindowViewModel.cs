@@ -238,7 +238,14 @@ namespace MIDIparser.ViewModels
             }
             else
             {
-                channelId = Int32.Parse(SelectedChannel.Split(' ')[1]);
+                try
+                {
+                    channelId = Int32.Parse(SelectedChannel.Split(' ')[1]);
+                }
+                catch(NullReferenceException ex)
+                {
+                    channelId = 0;
+                }
             }
             ParsedNotes = _midiEventsTextParser.GetNotesOfChannel(channelId);
             PresentedNotes = _midiEventsTextParser.NotesInChannel[channelId];
@@ -263,6 +270,22 @@ namespace MIDIparser.ViewModels
             PlaybackCurrentTimeWatcher.Instance.AddPlayback(playback, TimeSpanType.Midi);
             PlaybackCurrentTimeWatcher.Instance.CurrentTimeChanged += OnCurrentTimeChanged;
             OnPropertyChange("CurrentSongPlayTime");
+            if(channelId == 0)
+            {
+                EventSystem.Publish<OnChannelChangeMessage>(
+                    new OnChannelChangeMessage
+                    {
+                        channelID = this.channelId
+                    });
+            }
+            else
+            {
+                EventSystem.Publish<OnChannelChangeMessage>(
+                    new OnChannelChangeMessage
+                    {
+                        channelID = this.channelId - 1
+                    });
+            }
         }
 
         private void SplitByChannels()

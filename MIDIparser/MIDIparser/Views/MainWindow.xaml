@@ -63,7 +63,9 @@
             </Grid>
             <TabControl Grid.Column="0" Grid.Row="2" Grid.RowSpan="2">
                 <TabItem Header="General">
+                    <localView:GeneralSettingsView>
 
+                    </localView:GeneralSettingsView>
                 </TabItem>
                 <TabItem Header="Game moves">
 
