@@ -6,7 +6,7 @@
              xmlns:local="clr-namespace:MIDIparser.Views"
              xmlns:localVm="clr-namespace:MIDIparser.ViewModels"
              mc:Ignorable="d" 
-             d:DesignHeight="450" d:DesignWidth="800">
+             d:DesignHeight="190" d:DesignWidth="800">
 
     <UserControl.DataContext>
         <localVm:GameMovementViewModel/>
@@ -17,14 +17,13 @@
             <ColumnDefinition  Width="50px"/>
             <ColumnDefinition />
         </Grid.ColumnDefinitions>
-        <Grid Grid.Column="0">
-            <Grid.RowDefinitions>
+        <Grid.RowDefinitions>
                 <RowDefinition Height="32px"/>
                 <RowDefinition Height="33px"/>
                 <RowDefinition Height="33px"/>
                 <RowDefinition Height="32px"/>
-                <RowDefinition Height="20px"/>
-            </Grid.RowDefinitions>
+                <RowDefinition Height="50px"/>
+        </Grid.RowDefinitions>
             <Border Grid.Row="0" BorderBrush="Black" BorderThickness="1" Padding="0 0 0 1">
                 <Image Source="/Resources/Arrows/ArrowUp.png"></Image>
             </Border>
@@ -34,12 +33,11 @@
             <Border Grid.Row="2" BorderBrush="Black" BorderThickness="1" Padding="0 1 0 1">
                 <Image Source="/Resources/Arrows/ArrowLEFT.png"></Image>
             </Border>
-            <Border Grid.Row="3" BorderBrush="Black" BorderThickness="1" Padding="0 1 0 0">
-                <Image  Source="/Resources/Arrows/ArrowDOWN.png"></Image>
-            </Border>
-        </Grid>
-        <ScrollViewer Grid.Column="1" HorizontalScrollBarVisibility="Visible" VerticalScrollBarVisibility="Hidden" Height="180px">
-            <Canvas x:Name="PlayerMovementCanvas" Width="10000px">
+        <Border Grid.Row="3" BorderBrush="Black" BorderThickness="1" Padding="0 1 0 0">
+            <Image  Source="/Resources/Arrows/ArrowDOWN.png"></Image>
+        </Border>
+        <ScrollViewer Grid.Column="1" Grid.RowSpan="5" HorizontalScrollBarVisibility="Visible" VerticalScrollBarVisibility="Hidden" Height="180px">
+            <Canvas x:Name="PlayerMovementCanvas" Width="{Binding SongLength}" Height="160px" VerticalAlignment="Top">
                 <Line X1='0'
                  X2='{Binding ActualWidth, Mode=OneWay, 
                  RelativeSource={RelativeSource AncestorType=Canvas, Mode=FindAncestor}}'
@@ -48,8 +46,8 @@
                  Stroke="Gray"
                  StrokeThickness='1' />
 
-                <Line X1='0'
-                 X2='0'
+                <Line X1='{Binding CurrentSongPosition}'
+                 X2='{Binding CurrentSongPosition}'
                  Y1='0' 
                  Y2='{Binding ActualHeight, Mode=OneWay, 
                  RelativeSource={RelativeSource AncestorType=Canvas, Mode=FindAncestor}}'

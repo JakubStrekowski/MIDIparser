@@ -15,6 +15,7 @@ using Melanchall.DryWetMidi.Devices;
 using Melanchall.DryWetMidi.Tools;
 using System.Threading;
 using Melanchall.DryWetMidi.Interaction;
+using MIDIparser.EventMessages;
 
 namespace MIDIparser.ViewModels
 {
@@ -221,6 +222,10 @@ namespace MIDIparser.ViewModels
                 selectedNotes = new ObservableCollection<Note>();
                 SplitByChannels();
                 SelectedChannel = "All channels";
+                EventSystem.Publish<OnMidiLoadedMessage>(
+                    new OnMidiLoadedMessage { 
+                        midiChannels = this.midiChannels,
+                        playback = this.playback });
             }
         }
 
@@ -342,6 +347,12 @@ namespace MIDIparser.ViewModels
                         SelectedNote = n; break;
                     }
                 }
+
+                EventSystem.Publish<OnMusicIsPlayingMessage>(
+                    new OnMusicIsPlayingMessage
+                    {
+                        currentPosition = time
+                    });
 
                 OnPropertyChange("CurrentSongPlayTime");
                 Console.WriteLine($"Current time is {time}.");
