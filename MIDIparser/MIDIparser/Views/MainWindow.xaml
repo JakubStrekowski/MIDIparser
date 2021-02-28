@@ -68,7 +68,9 @@
                     </localView:GeneralSettingsView>
                 </TabItem>
                 <TabItem Header="Game moves">
+                    <localView:GameMovesSettingsView>
 
+                    </localView:GameMovesSettingsView>
                 </TabItem>
                 <TabItem Header="Game events">
 

@@ -37,7 +37,7 @@
             <Image  Source="/Resources/Arrows/ArrowDOWN.png"></Image>
         </Border>
         <ScrollViewer x:Name="MainScrollView" Grid.Column="1" Grid.RowSpan="5" HorizontalScrollBarVisibility="Visible" VerticalScrollBarVisibility="Hidden" Height="180px" Width="auto">
-            <Canvas x:Name="PlayerMovementCanvas" Width="{Binding SongLength}" Height="160px" VerticalAlignment="Top" HorizontalAlignment="Left">
+            <Canvas x:Name="PlayerMovementCanvas" Width="{Binding SongLength}" Height="160px" VerticalAlignment="Top" HorizontalAlignment="Left" MouseLeftButtonDown="CanvasLeftClick">
                 <Line X1='0'
                  X2='{Binding ActualWidth, Mode=OneWay, 
                  RelativeSource={RelativeSource AncestorType=Canvas, Mode=FindAncestor}}'

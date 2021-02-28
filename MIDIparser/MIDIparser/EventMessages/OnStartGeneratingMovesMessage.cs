@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace MIDIparser.EventMessages
 {
-    class OnRedrawMusicMovesMessage
+    class OnStartGeneratingMovesMessage
     {
-        public double posBegin;
-        public double posEnd;
+        public double startTime;
+        public double endTime;
     }
 }

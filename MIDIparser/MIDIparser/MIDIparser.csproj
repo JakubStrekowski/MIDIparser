@@ -75,13 +75,17 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="EventArgs.cs" />
+    <Compile Include="EventMessages\OnChangePreviewControlMessage.cs" />
     <Compile Include="EventMessages\OnChannelChangeMessage.cs" />
     <Compile Include="EventMessages\OnCreateNoteElementMessage.cs" />
     <Compile Include="EventMessages\OnMidiLoadedMessage.cs" />
+    <Compile Include="EventMessages\OnMovementChannelChangeMessage.cs" />
     <Compile Include="EventMessages\OnMusicIsPlayingMessage.cs" />
     <Compile Include="EventMessages\OnRedrawMusicMovesMessage.cs" />
+    <Compile Include="EventMessages\OnReturnPreviewClickOffsetMessage.cs" />
     <Compile Include="EventMessages\OnScrollToCursorChangeMessage.cs" />
     <Compile Include="EventMessages\OnSongPreviewScaleChangeMessage.cs" />
+    <Compile Include="EventMessages\OnStartGeneratingMovesMessage.cs" />
     <Compile Include="EventRaiser.cs" />
     <Compile Include="EventSystem.cs" />
     <Compile Include="Helpers\MidiEventsToTextParser.cs" />
@@ -89,9 +93,14 @@
     <Compile Include="Models\MusicEventBase.cs" />
     <Compile Include="Models\MusicMovementEvent.cs" />
     <Compile Include="ViewModels\GameMovementViewModel.cs" />
+    <Compile Include="ViewModels\GameMovesSettingsViewModel.cs" />
     <Compile Include="ViewModels\GeneralSettingsViewModel.cs" />
     <Compile Include="ViewModels\MainWindowViewModel.cs" />
     <Page Include="Views\GameMovementView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\GameMovesSettingsView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -111,6 +120,9 @@
     <Compile Include="RelayCommand.cs" />
     <Compile Include="Views\GameMovementView.xaml.cs">
       <DependentUpon>GameMovementView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\GameMovesSettingsView.xaml.cs">
+      <DependentUpon>GameMovesSettingsView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\GeneralSettingsView.xaml.cs">
       <DependentUpon>GeneralSettingsView.xaml</DependentUpon>

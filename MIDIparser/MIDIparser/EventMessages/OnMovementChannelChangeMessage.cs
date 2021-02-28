@@ -6,9 +6,8 @@ using System.Threading.Tasks;
 
 namespace MIDIparser.EventMessages
 {
-    class OnRedrawMusicMovesMessage
+    class OnMovementChannelChangeMessage
     {
-        public double posBegin;
-        public double posEnd;
+        public int channelID;
     }
 }

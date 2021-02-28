@@ -225,7 +225,9 @@ namespace MIDIparser.ViewModels
                 EventSystem.Publish<OnMidiLoadedMessage>(
                     new OnMidiLoadedMessage { 
                         midiChannels = this.midiChannels,
-                        playback = this.playback });
+                        playback = this.playback,
+                        midiChannelsTitles = this.channelTitles
+                    });
             }
         }
 
@@ -295,7 +297,15 @@ namespace MIDIparser.ViewModels
 
         private void PlayMidiFile()
         {
-            Task.Run(StartPlayingMidi);
+            if (playback.IsRunning)
+            {
+                playback.Stop();
+                PlaybackCurrentTimeWatcher.Instance.Stop();
+            }
+            else
+            {
+                Task.Run(StartPlayingMidi);
+            }
         }
 
         private void StopPlayMidiFile()
@@ -381,11 +391,7 @@ namespace MIDIparser.ViewModels
                 Console.WriteLine($"Current time is {time}.");
             }
         }
-
-
         #endregion
-
-
 
         public event PropertyChangedEventHandler PropertyChanged;
         protected void OnPropertyChange(string propertyName)

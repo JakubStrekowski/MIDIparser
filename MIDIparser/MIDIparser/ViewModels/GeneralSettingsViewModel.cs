@@ -10,7 +10,7 @@ namespace MIDIparser.ViewModels
 {
     class GeneralSettingsViewModel : INotifyPropertyChanged
     {
-        private readonly int[] scaleOptions = {1, 2, 5, 10, 20, 50, 100};
+        private readonly int[] scaleOptions = {100, 50, 20, 10, 5, 2, 1};
         private int presentedScale;
         private bool scrollToCursor;
         public int PresentedScale

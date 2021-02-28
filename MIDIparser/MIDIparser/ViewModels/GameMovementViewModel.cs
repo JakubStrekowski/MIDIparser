@@ -12,6 +12,7 @@ using MIDIparser.Views;
 
 namespace MIDIparser.ViewModels
 {
+
     class GameMovementViewModel : INotifyPropertyChanged
     {
         private IEnumerable<MidiFile> midiChannels;
@@ -19,7 +20,6 @@ namespace MIDIparser.ViewModels
         private long currentSongPosition;
         private int songPresentedSizeMultiplier;
         private int selectedChannel;
-
 
         public long SongLength
         {
@@ -53,7 +53,7 @@ namespace MIDIparser.ViewModels
                 SongLength = SongLength;
                 if (midiChannels != null)
                 {
-                    RecalculateCanvasElements();
+                    //RecalculateCanvasElements();
                 }
                 OnPropertyChange("SongPresentedSizeMultiplier");
             }
@@ -64,10 +64,6 @@ namespace MIDIparser.ViewModels
             set
             {
                 selectedChannel = value;
-                if (midiChannels != null)
-                {
-                    RecalculateCanvasElements();
-                }
                 OnPropertyChange("SelectedChannel");
             }
         }
@@ -80,7 +76,8 @@ namespace MIDIparser.ViewModels
             EventSystem.Subscribe<OnMidiLoadedMessage>(CalculateMaxLength);
             EventSystem.Subscribe<OnMusicIsPlayingMessage>(GetCurrentPosition);
             EventSystem.Subscribe<OnSongPreviewScaleChangeMessage>(GetNewScale);
-            EventSystem.Subscribe<OnChannelChangeMessage>(GetSelectedChannel);
+            EventSystem.Subscribe<OnMovementChannelChangeMessage>(GetSelectedChannel);
+            EventSystem.Subscribe<OnStartGeneratingMovesMessage>(StartGeneratingMoves);
         }
 
         #region EventHandlers
@@ -89,7 +86,7 @@ namespace MIDIparser.ViewModels
             SongPresentedSizeMultiplier = 10;
             midiChannels = msg.midiChannels;
             SongLength = TimeConverter.ConvertFrom(msg.playback.GetDuration(TimeSpanType.Midi), msg.playback.TempoMap);
-            RecalculateCanvasElements();
+            //RecalculateCanvasElements();
         }
 
         public void GetCurrentPosition(OnMusicIsPlayingMessage msg)
@@ -101,9 +98,13 @@ namespace MIDIparser.ViewModels
         {
             SongPresentedSizeMultiplier = msg.newScale;
         }
-        public void GetSelectedChannel(OnChannelChangeMessage msg)
+        public void GetSelectedChannel(OnMovementChannelChangeMessage msg)
         {
             SelectedChannel = msg.channelID;
+        }
+        public void StartGeneratingMoves(OnStartGeneratingMovesMessage msg)
+        {
+            RecalculateCanvasElements(msg.startTime, msg.endTime);
         }
         #endregion
 
@@ -113,56 +114,82 @@ namespace MIDIparser.ViewModels
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
-        private void RecalculateCanvasElements()
+        private void RecalculateCanvasElements(double startTime, double endTime)
         {
             int NOTE_AVG_AMMNT = 10;
             float currentBaseToneAvg;
             int movingAverageAmmount = 0;
             int toneSum = 0;
-            Note[] notes = midiChannels.ToArray()[selectedChannel].GetNotes().ToArray();
-            Note[] noteAvgGroup = new Note[NOTE_AVG_AMMNT];
             int noteGroupMin;
             int noteGroupMax;
+            startTime *= SongPresentedSizeMultiplier;
+            endTime *= SongPresentedSizeMultiplier;
+
+            List<Note> notes = midiChannels.ToArray()[selectedChannel].GetNotes().ToList();
+            for(int i = 0; i< notes.Count; i++)
+            {
+                if(notes[i].Time < startTime || notes[i].Time > endTime)
+                {
+                    notes.RemoveAt(i);
+                    i--;
+                    continue;
+                }
+            }
+            if (NOTE_AVG_AMMNT > notes.Count) NOTE_AVG_AMMNT = notes.Count;
+
+            if (NOTE_AVG_AMMNT == 0) return; //no notes found between set begin and end time
+
+            noteGroupMin = Int32.MaxValue;
+            noteGroupMax = Int32.MinValue;
+            for (int i = 0; i < NOTE_AVG_AMMNT; i++)
+            {
+                Note note = notes[i];
+                toneSum += note.NoteNumber * (note.Octave + 1);
+                if (note.NoteNumber * (note.Octave + 1) < noteGroupMin)
+                {
+                    noteGroupMin = note.NoteNumber * (note.Octave + 1);
+                }
+                else if (note.NoteNumber * (note.Octave + 1) > noteGroupMax)
+                {
+                    noteGroupMax = note.NoteNumber * (note.Octave + 1);
+                }
+            }
+            currentBaseToneAvg = (toneSum / NOTE_AVG_AMMNT);
+
+            Note[] noteAvgGroup = new Note[NOTE_AVG_AMMNT];
+
             EventSystem.Publish<OnRedrawMusicMovesMessage>(
                 new OnRedrawMusicMovesMessage
-                { });
+                {
+                    posBegin = startTime / SongPresentedSizeMultiplier,
+                    posEnd = endTime / SongPresentedSizeMultiplier
+                });
+
             for (int i = 0; i < notes.Count(); i++)
             {
-                noteGroupMin = Int32.MaxValue;
-                noteGroupMax = Int32.MinValue;
                 Note note = notes[i];
                 noteAvgGroup[i % NOTE_AVG_AMMNT] = note;
                 if (movingAverageAmmount < NOTE_AVG_AMMNT)
                 {
-                    toneSum += note.NoteNumber * (note.Octave+1);
-                    movingAverageAmmount++;
-                    currentBaseToneAvg = (toneSum / movingAverageAmmount);
-                    for(int j = 0; j <= i; j++)
-                    {
-                        if(noteAvgGroup[j].NoteNumber * (note.Octave + 1) < noteGroupMin)
-                        {
-                            noteGroupMin = noteAvgGroup[j].NoteNumber;
-                        }
-                        else if(noteAvgGroup[j].NoteNumber * (note.Octave + 1) > noteGroupMax)
-                        {
-                            noteGroupMax = noteAvgGroup[j].NoteNumber;
-                        }
-                    }
+                    movingAverageAmmount++
+                    ; // first group of notes is calculated before this loop
                 }
                 else
                 {
+                    noteGroupMin = Int32.MaxValue;
+                    noteGroupMax = Int32.MinValue;
                     toneSum -= notes[i - NOTE_AVG_AMMNT].NoteNumber * (notes[i - NOTE_AVG_AMMNT].Octave + 1);
                     toneSum += note.NoteNumber * (note.Octave + 1);
                     currentBaseToneAvg = (toneSum / NOTE_AVG_AMMNT);
                     for (int j = 0; j < NOTE_AVG_AMMNT; j++)
                     {
-                        if (noteAvgGroup[j].NoteNumber * (note.Octave + 1) < noteGroupMin)
+                        if (noteAvgGroup[j].NoteNumber * (noteAvgGroup[j].Octave + 1) < noteGroupMin)
                         {
-                            noteGroupMin = noteAvgGroup[j].NoteNumber * (note.Octave + 1);
+                            noteGroupMin = noteAvgGroup[j].NoteNumber * (noteAvgGroup[j].Octave + 1);
                         }
-                        else if (noteAvgGroup[j].NoteNumber * (note.Octave + 1) > noteGroupMax)
+                        else if (noteAvgGroup[j].NoteNumber * (noteAvgGroup[j].Octave + 1) > noteGroupMax)
                         {
-                            noteGroupMax = noteAvgGroup[j].NoteNumber * (note.Octave + 1);
+                            noteGroupMax = noteAvgGroup[j].NoteNumber * (noteAvgGroup[j].Octave + 1);
                         }
                     }
                 }
