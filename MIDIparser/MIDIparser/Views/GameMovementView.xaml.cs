@@ -22,20 +22,26 @@ namespace MIDIparser.Views
     public partial class GameMovementView : UserControl
     {
         private readonly Color[] channelToColor = { Color.FromRgb(0x95, 0xff, 0xff), Color.FromRgb(0x95, 0xff, 0x9c), Color.FromRgb(0xa8, 0x95, 0xff), Color.FromRgb(0xff, 0xd3, 0x95)};
+        //note creation
         private bool isCreatingMove;
         private double newMovePosition;
         private int newMoveType;
-        private bool checkScrollToCursor;
         private PreviewControlEnum controlEnum;
         private Line beginLine;
         private Line endLine;
+        //grid settings
+        private bool checkScrollToCursor;
+        private bool snapToGrid;
+        private long gridSize;
+        private long gridPadding;
+
 
         public GameMovementView()
         {
             InitializeComponent();
             EventSystem.Subscribe<OnCreateNoteElementMessage>(DrawNewElement);
             EventSystem.Subscribe<OnRedrawMusicMovesMessage>(CleanupCanvas);
-            EventSystem.Subscribe<OnScrollToCursorChangeMessage>(GetScrollToCursor);
+            EventSystem.Subscribe<OnGeneralSettingsChangeMessage>(GetScrollToCursor);
             EventSystem.Subscribe<OnChangePreviewControlMessage>(GetPreviewControlChange);
         }
 
@@ -82,10 +88,14 @@ namespace MIDIparser.Views
                 }
             }
         }
-        void GetScrollToCursor(OnScrollToCursorChangeMessage msg)
+        void GetScrollToCursor(OnGeneralSettingsChangeMessage msg)
         {
-            checkScrollToCursor = msg.newValue;
-        }
+            checkScrollToCursor = msg.scrollToCursor;
+            snapToGrid = msg.snapToGrid;
+            gridSize = msg.gridSize;
+            gridPadding = msg.gridPadding;
+            BackgroundTiles.Viewport = new Rect(gridPadding - gridSize, -10, gridSize, 500);
+         }
         void GetPreviewControlChange(OnChangePreviewControlMessage msg)
         {
             controlEnum = msg.currentControl;
@@ -93,7 +103,7 @@ namespace MIDIparser.Views
 
         #endregion
 
-        public Rectangle MakeNoteRectangle(int noteNumber, long startTime, long duration)
+        public void MakeNoteRectangle(int noteNumber, long startTime, long duration)
         {
             Rectangle rect = new Rectangle
             {
@@ -104,10 +114,32 @@ namespace MIDIparser.Views
                 Height = 32
             };
             rect.Name = "Note" + PlayerMovementCanvas.Children.Count;
+            if (snapToGrid)
+            {
+                if((startTime - gridPadding) % gridSize > 0.5 * (gridSize))
+                {
+                    startTime = startTime - (startTime % gridSize) + gridSize + gridPadding;
+                }
+                else
+                {
+                    startTime = startTime - (startTime % gridSize) + gridPadding;
+                }
+
+                if ((startTime + duration - gridPadding) % gridSize > 0.5 * (gridSize))
+                {
+                    duration = duration - (duration % gridSize) + gridSize + gridPadding;
+                }
+                else
+                {
+                    duration = duration - (duration % gridSize) + gridPadding;
+                }
+                rect.Width = duration;
+            }
+            if (rect.Width == 0) return;
             rect.SetValue(Canvas.TopProperty, (double)(noteNumber) * 32);
             rect.SetValue(Canvas.LeftProperty, (double)startTime);
             PlayerMovementCanvas.Children.Add(rect);
-            return rect;
+            return;
         }
 
         private void CanvasLeftClick(object sender, MouseButtonEventArgs e)
@@ -128,13 +160,29 @@ namespace MIDIparser.Views
                 }
                 if(controlEnum == PreviewControlEnum.DeleteMove)
                 {
-                    if(e.Source is Rectangle)
-                    {
-                        if ((e.Source as Rectangle).Name.Contains("Note"))
-                        {
-                            PlayerMovementCanvas.Children.Remove(e.Source as FrameworkElement);
-                        }
-                    }
+                    DeleteNoteImplementation(e);
+                }
+            }
+        }
+
+        private void CanvasRightClick(object sender, MouseButtonEventArgs e)
+        {
+            if (controlEnum != PreviewControlEnum.None)
+            {
+                if (controlEnum == PreviewControlEnum.CreateNewMove)
+                {
+                    DeleteNoteImplementation(e);
+                }
+            }
+        }
+
+        private void DeleteNoteImplementation(MouseButtonEventArgs e)
+        {
+            if (e.Source is Rectangle)
+            {
+                if ((e.Source as Rectangle).Name.Contains("Note"))
+                {
+                    PlayerMovementCanvas.Children.Remove(e.Source as FrameworkElement);
                 }
             }
         }

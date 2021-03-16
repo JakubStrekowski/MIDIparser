@@ -223,10 +223,12 @@ namespace MIDIparser.ViewModels
                 SplitByChannels();
                 SelectedChannel = "All channels";
                 EventSystem.Publish<OnMidiLoadedMessage>(
-                    new OnMidiLoadedMessage { 
+                    new OnMidiLoadedMessage
+                    {
                         midiChannels = this.midiChannels,
                         playback = this.playback,
-                        midiChannelsTitles = this.channelTitles
+                        midiChannelsTitles = this.channelTitles,
+                        ticksPerQuarterNote = 100
                     });
             }
         }

@@ -21,6 +21,7 @@
         <Grid.RowDefinitions>
             <RowDefinition  Height="60px"/>
             <RowDefinition  Height="60px"/>
+            <RowDefinition  Height="60px"/>
             <RowDefinition />
             <RowDefinition />
         </Grid.RowDefinitions>
@@ -31,5 +32,14 @@
 
         <TextBlock Grid.Column="0" Grid.Row="1" Text="Scroll to cursor:" VerticalAlignment="Center"  Margin="10 20 15 20" HorizontalAlignment="Right"/>
         <CheckBox Grid.Column="1" Grid.Row="1" Margin="30 5 30 5" VerticalAlignment="Center" HorizontalAlignment="Left" IsChecked="{Binding ScrollToCursor}"/>
+
+        <TextBlock Grid.Column="0" Grid.Row="2" Text="Snap to Grid:" VerticalAlignment="Center"  Margin="10 20 15 20" HorizontalAlignment="Right"/>
+        <StackPanel Grid.Column="1" Grid.Row="2" VerticalAlignment="Center" Margin="10 0 0 0" Orientation="Horizontal" Grid.ColumnSpan="2"> 
+            <CheckBox   VerticalAlignment="Center" HorizontalAlignment="Left" IsChecked="{Binding SnapToGrid, Mode=TwoWay}"/>
+            <TextBlock x:Name="GridSizeTxtBlock" Margin="30 0 0 0" Text="Grid size:" />
+            <TextBox  Margin="5 0 0 0" Width="60px" PreviewTextInput="NumberValidationTextBox" Text="{Binding GridSize, Mode=TwoWay}" IsEnabled="{Binding SnapToGrid}"/>
+            <TextBlock x:Name="GridPaddingTxtBlock" Margin="30 0 0 0" Text="Grid padding:" />
+            <TextBox  Margin="5 0 0 0" Width="60px" PreviewTextInput="NumberValidationTextBox" Text="{Binding GridPadding, Mode=TwoWay}" IsEnabled="{Binding SnapToGrid}"/>
+        </StackPanel>
     </Grid>
 </UserControl>

@@ -83,7 +83,7 @@
     <Compile Include="EventMessages\OnMusicIsPlayingMessage.cs" />
     <Compile Include="EventMessages\OnRedrawMusicMovesMessage.cs" />
     <Compile Include="EventMessages\OnReturnPreviewClickOffsetMessage.cs" />
-    <Compile Include="EventMessages\OnScrollToCursorChangeMessage.cs" />
+    <Compile Include="EventMessages\OnGeneralSettingsChangeMessage.cs" />
     <Compile Include="EventMessages\OnSongPreviewScaleChangeMessage.cs" />
     <Compile Include="EventMessages\OnStartGeneratingMovesMessage.cs" />
     <Compile Include="EventRaiser.cs" />
