@@ -78,6 +78,7 @@
     <Compile Include="EventMessages\OnChangePreviewControlMessage.cs" />
     <Compile Include="EventMessages\OnChannelChangeMessage.cs" />
     <Compile Include="EventMessages\OnCreateNoteElementMessage.cs" />
+    <Compile Include="EventMessages\OnExportSendRawEventsMessage.cs" />
     <Compile Include="EventMessages\OnMidiLoadedMessage.cs" />
     <Compile Include="EventMessages\OnMovementChannelChangeMessage.cs" />
     <Compile Include="EventMessages\OnMusicIsPlayingMessage.cs" />
@@ -85,6 +86,7 @@
     <Compile Include="EventMessages\OnReturnPreviewClickOffsetMessage.cs" />
     <Compile Include="EventMessages\OnGeneralSettingsChangeMessage.cs" />
     <Compile Include="EventMessages\OnSongPreviewScaleChangeMessage.cs" />
+    <Compile Include="EventMessages\OnStartExportMessage.cs" />
     <Compile Include="EventMessages\OnStartGeneratingMovesMessage.cs" />
     <Compile Include="EventRaiser.cs" />
     <Compile Include="EventSystem.cs" />
@@ -92,10 +94,15 @@
     <Compile Include="Models\DancerEvents.cs" />
     <Compile Include="Models\MusicEventBase.cs" />
     <Compile Include="Models\MusicMovementEvent.cs" />
+    <Compile Include="ViewModels\ExportSettingsViewModel.cs" />
     <Compile Include="ViewModels\GameMovementViewModel.cs" />
     <Compile Include="ViewModels\GameMovesSettingsViewModel.cs" />
     <Compile Include="ViewModels\GeneralSettingsViewModel.cs" />
     <Compile Include="ViewModels\MainWindowViewModel.cs" />
+    <Page Include="Views\ExportSettingsView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\GameMovementView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -118,6 +125,9 @@
     </Compile>
     <Compile Include="Models\DancerSong.cs" />
     <Compile Include="RelayCommand.cs" />
+    <Compile Include="Views\ExportSettingsView.xaml.cs">
+      <DependentUpon>ExportSettingsView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\GameMovementView.xaml.cs">
       <DependentUpon>GameMovementView.xaml</DependentUpon>
     </Compile>

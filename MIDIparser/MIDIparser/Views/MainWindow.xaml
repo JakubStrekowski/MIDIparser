@@ -78,6 +78,11 @@
                 <TabItem Header="Effects">
 
                 </TabItem>
+                <TabItem Header="Export">
+                    <localView:ExportSettingsView>
+                        
+                    </localView:ExportSettingsView>
+                </TabItem>
             </TabControl>
         </Grid>
         <Grid Grid.Row="2" Grid.ColumnSpan="3">

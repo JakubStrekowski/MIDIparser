@@ -9,6 +9,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using MIDIparser.Views;
+using MIDIparser.Models;
+using System.Xml.Serialization;
+using System.IO;
 
 namespace MIDIparser.ViewModels
 {
@@ -47,7 +50,7 @@ namespace MIDIparser.ViewModels
             {
                 if (songPresentedSizeMultiplier != 0)
                 {
-                    songLength = (songLength * songPresentedSizeMultiplier);
+                    songLength *= songPresentedSizeMultiplier;
                 }
                 songPresentedSizeMultiplier = value;
                 SongLength = SongLength;
@@ -78,6 +81,7 @@ namespace MIDIparser.ViewModels
             EventSystem.Subscribe<OnSongPreviewScaleChangeMessage>(GetNewScale);
             EventSystem.Subscribe<OnMovementChannelChangeMessage>(GetSelectedChannel);
             EventSystem.Subscribe<OnStartGeneratingMovesMessage>(StartGeneratingMoves);
+            EventSystem.Subscribe<OnExportSendRawEventsMessage>(ExportMusicEvents);
         }
 
         #region EventHandlers
@@ -105,6 +109,18 @@ namespace MIDIparser.ViewModels
         public void StartGeneratingMoves(OnStartGeneratingMovesMessage msg)
         {
             RecalculateCanvasElements(msg.startTime, msg.endTime);
+        }
+
+        public void ExportMusicEvents(OnExportSendRawEventsMessage msg)
+        {
+            foreach(MusicMovementEvent musicEvent in msg.musicEvents.movementEvents)
+            {
+                musicEvent.RecalculateTime(SongPresentedSizeMultiplier, msg.maxMoveTapThreshold);
+            }
+            System.IO.TextWriter writer = new StreamWriter("test.xml");
+            XmlSerializer xml = new XmlSerializer(typeof(DancerEvents));
+            xml.Serialize(writer, msg.musicEvents);
+            writer.Close();
         }
         #endregion
 

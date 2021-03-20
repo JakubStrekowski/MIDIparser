@@ -77,7 +77,7 @@ namespace MIDIparser.ViewModels
         {
             get
             {
-                return MovesPaletteControl == PreviewControlEnum.None || MovesPaletteControl == PreviewControlEnum.SetBeginTime || MovesPaletteControl == PreviewControlEnum.SetEndTime ? true : false;
+                return MovesPaletteControl == PreviewControlEnum.None || MovesPaletteControl == PreviewControlEnum.SetBeginTime || MovesPaletteControl == PreviewControlEnum.SetEndTime;
             }
             set
             {

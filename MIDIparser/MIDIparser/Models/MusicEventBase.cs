@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Serialization;
 
 namespace MIDIparser.Models
 {
@@ -27,8 +28,36 @@ namespace MIDIparser.Models
         private long startTime;
         private long duration;
 
-        protected EventTypeEnum EventTypeID { get => eventTypeID; set => eventTypeID = value; }
-        protected long StartTime { get => startTime; set => startTime = value; }
-        protected long Duration { get => duration; set => duration = value; }
+        [XmlElement("eventTypeID")]
+        public EventTypeEnum EventTypeID { get => eventTypeID; set => eventTypeID = value; }
+        [XmlElement("startTime")]
+        public long StartTime { get => startTime; set => startTime = value; }
+        [XmlElement("duration")]
+        public long Duration { get => duration; set => duration = value; }
+
+        public void RecalculateTime(int scale, long moveTapThreshold)
+        {
+            this.Duration *= scale;
+            this.StartTime *= scale;
+            if (Duration <= moveTapThreshold)
+            {
+                switch (this.EventTypeID)
+                {
+                    case EventTypeEnum.ArrowDownDuration:
+                        EventTypeID = EventTypeEnum.ArrowDownInstant;
+                        break;
+                    case EventTypeEnum.ArrowLeftDuration:
+                        EventTypeID = EventTypeEnum.ArrowLeftInstant;
+                        break;
+                    case EventTypeEnum.ArrowRightDuration:
+                        EventTypeID = EventTypeEnum.ArrowRightInstant;
+                        break;
+                    case EventTypeEnum.ArrowUpDuration:
+                        EventTypeID = EventTypeEnum.ArrowUpInstant;
+                        break;
+                }
+                Duration = 0;
+            }
+        }
     }
 }

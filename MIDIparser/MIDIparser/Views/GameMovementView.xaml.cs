@@ -1,4 +1,5 @@
 ﻿using MIDIparser.EventMessages;
+using MIDIparser.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -34,8 +35,9 @@ namespace MIDIparser.Views
         private bool snapToGrid;
         private long gridSize;
         private long gridPadding;
-
-
+        //export
+        private DancerEvents musicEventsRaw;
+        private long maxTapMoveThreshold;
         public GameMovementView()
         {
             InitializeComponent();
@@ -43,10 +45,54 @@ namespace MIDIparser.Views
             EventSystem.Subscribe<OnRedrawMusicMovesMessage>(CleanupCanvas);
             EventSystem.Subscribe<OnGeneralSettingsChangeMessage>(GetScrollToCursor);
             EventSystem.Subscribe<OnChangePreviewControlMessage>(GetPreviewControlChange);
+            EventSystem.Subscribe<OnStartExportMessage>(ParseAllMusicEvents);
+            musicEventsRaw = new DancerEvents();
         }
 
 
         #region EventHandlers
+        void ParseAllMusicEvents(OnStartExportMessage msg)
+        {
+            maxTapMoveThreshold = msg.MaxLengthToTap;
+            for (int i = 0; i < PlayerMovementCanvas.Children.Count; i++)
+            {
+                if (PlayerMovementCanvas.Children[i] is Rectangle)
+                {
+                    if ((PlayerMovementCanvas.Children[i] as Rectangle).Name.Contains("Note"))
+                    {
+                        double left = (double)PlayerMovementCanvas.Children[i].GetValue(Canvas.LeftProperty);
+                        long position = (long)left;
+                        double top = (double) PlayerMovementCanvas.Children[i].GetValue(Canvas.TopProperty);
+                        switch (top)
+                        {
+                            case 128:
+                                musicEventsRaw.movementEvents.Add(new MusicMovementEvent(EventTypeEnum.ArrowUpDuration, position, (long)(PlayerMovementCanvas.Children[i] as Rectangle).Width));
+                                break;
+                            case 96:
+                                musicEventsRaw.movementEvents.Add(new MusicMovementEvent(EventTypeEnum.ArrowRightDuration, position, (long)(PlayerMovementCanvas.Children[i] as Rectangle).Width));
+                                break;
+                            case 64:
+                                musicEventsRaw.movementEvents.Add(new MusicMovementEvent(EventTypeEnum.ArrowLeftDuration, position, (long)(PlayerMovementCanvas.Children[i] as Rectangle).Width));
+                                break;
+                            case 32:
+                                musicEventsRaw.movementEvents.Add(new MusicMovementEvent(EventTypeEnum.ArrowDownDuration, position, (long)(PlayerMovementCanvas.Children[i] as Rectangle).Width));
+                                break;
+                        }
+                    }
+                    else if((PlayerMovementCanvas.Children[i] as Rectangle).Name.Contains("Event"))
+                    {
+                        //TODO event scrape
+                    }
+                }
+            }
+
+            EventSystem.Publish(
+                new OnExportSendRawEventsMessage
+                {
+                    musicEvents = this.musicEventsRaw,
+                    maxMoveTapThreshold = this.maxTapMoveThreshold
+                });
+        }
         void DrawNewElement(OnCreateNoteElementMessage msg)
         {
             MakeNoteRectangle(msg.channelID, msg.startTime, msg.duration);
