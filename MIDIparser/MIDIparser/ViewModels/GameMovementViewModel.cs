@@ -117,9 +117,15 @@ namespace MIDIparser.ViewModels
             {
                 musicEvent.RecalculateTime(SongPresentedSizeMultiplier, msg.maxMoveTapThreshold);
             }
-            System.IO.TextWriter writer = new StreamWriter("test.xml");
-            XmlSerializer xml = new XmlSerializer(typeof(DancerEvents));
-            xml.Serialize(writer, msg.musicEvents);
+            System.IO.Directory.CreateDirectory("Music");
+            System.IO.TextWriter writer = new StreamWriter("Music/test.xml");
+            string filename = msg.musicFilePath.Split('\\').Last();
+            File.Copy(msg.musicFilePath, "Music/" + filename, true);
+            string imageFileName = msg.imageFilePath.Split('\\').Last();
+            File.Copy(msg.imageFilePath, "Music/" + imageFileName, true);
+            DancerSong newSong = new DancerSong(msg.musicEvents, msg.title, msg.description, filename, imageFileName);
+            XmlSerializer xml = new XmlSerializer(typeof(DancerSong));
+            xml.Serialize(writer, newSong);
             writer.Close();
         }
         #endregion

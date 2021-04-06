@@ -214,8 +214,8 @@ namespace MIDIparser.ViewModels
             if (openFileDialog.ShowDialog() == true)
             {
                 SelectedNote = null;
-                _dancerSong.midi = MidiFile.Read(openFileDialog.FileName);
-                ParsedNotes=_midiEventsTextParser.ParseFromMidFormat(_dancerSong.midi);
+                _dancerSong.Midi = MidiFile.Read(openFileDialog.FileName);
+                ParsedNotes=_midiEventsTextParser.ParseFromMidFormat(_dancerSong.Midi);
                 channelId = 0;
                 ChannelTitles = _midiEventsTextParser.ChannelTitles;
                 PresentedNotes = _midiEventsTextParser.NotesInChannel[0];
@@ -265,7 +265,7 @@ namespace MIDIparser.ViewModels
             currentlyPlayingDevice = OutputDevice.GetByName("Microsoft GS Wavetable Synth");
             if (channelId == 0)
             {
-                playback = _dancerSong.midi.GetPlayback(currentlyPlayingDevice);
+                playback = _dancerSong.Midi.GetPlayback(currentlyPlayingDevice);
             }
             else
             {
@@ -294,7 +294,7 @@ namespace MIDIparser.ViewModels
 
         private void SplitByChannels()
         {
-            midiChannels = _dancerSong.midi.SplitByChannel();
+            midiChannels = _dancerSong.Midi.SplitByChannel();
         }
 
         private void PlayMidiFile()

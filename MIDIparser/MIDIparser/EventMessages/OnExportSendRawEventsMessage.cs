@@ -11,5 +11,9 @@ namespace MIDIparser.EventMessages
     {
         public DancerEvents musicEvents;
         public long maxMoveTapThreshold;
+        public string musicFilePath;
+        public string imageFilePath;
+        public string title;
+        public string description;
     }
 }

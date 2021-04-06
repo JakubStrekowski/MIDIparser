@@ -90,7 +90,11 @@ namespace MIDIparser.Views
                 new OnExportSendRawEventsMessage
                 {
                     musicEvents = this.musicEventsRaw,
-                    maxMoveTapThreshold = this.maxTapMoveThreshold
+                    maxMoveTapThreshold = this.maxTapMoveThreshold,
+                    musicFilePath = msg.musicFilePath,
+                    imageFilePath = msg.imageFilePath,
+                    title = msg.title,
+                    description = msg.description
                 });
         }
         void DrawNewElement(OnCreateNoteElementMessage msg)

@@ -88,7 +88,7 @@ namespace MIDIparser.ViewModels
         {
             get
             {
-                return MovesPaletteControl == PreviewControlEnum.CreateNewMove ? true : false;
+                return MovesPaletteControl == PreviewControlEnum.CreateNewMove;
             }
             set
             {
@@ -99,7 +99,7 @@ namespace MIDIparser.ViewModels
         {
             get
             {
-                return MovesPaletteControl == PreviewControlEnum.EditExistingMove ? true : false;
+                return MovesPaletteControl == PreviewControlEnum.EditExistingMove;
             }
             set
             {
@@ -110,7 +110,7 @@ namespace MIDIparser.ViewModels
         {
             get
             {
-                return MovesPaletteControl == PreviewControlEnum.DeleteMove ? true : false;
+                return MovesPaletteControl == PreviewControlEnum.DeleteMove;
             }
             set
             {
