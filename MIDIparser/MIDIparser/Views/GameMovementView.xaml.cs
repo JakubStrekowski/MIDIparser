@@ -65,16 +65,16 @@ namespace MIDIparser.Views
                         double top = (double) PlayerMovementCanvas.Children[i].GetValue(Canvas.TopProperty);
                         switch (top)
                         {
-                            case 128:
+                            case 0:
                                 musicEventsRaw.movementEvents.Add(new MusicMovementEvent(EventTypeEnum.ArrowUpDuration, position, (long)(PlayerMovementCanvas.Children[i] as Rectangle).Width));
                                 break;
-                            case 96:
+                            case 32:
                                 musicEventsRaw.movementEvents.Add(new MusicMovementEvent(EventTypeEnum.ArrowRightDuration, position, (long)(PlayerMovementCanvas.Children[i] as Rectangle).Width));
                                 break;
                             case 64:
                                 musicEventsRaw.movementEvents.Add(new MusicMovementEvent(EventTypeEnum.ArrowLeftDuration, position, (long)(PlayerMovementCanvas.Children[i] as Rectangle).Width));
                                 break;
-                            case 32:
+                            case 96:
                                 musicEventsRaw.movementEvents.Add(new MusicMovementEvent(EventTypeEnum.ArrowDownDuration, position, (long)(PlayerMovementCanvas.Children[i] as Rectangle).Width));
                                 break;
                         }
