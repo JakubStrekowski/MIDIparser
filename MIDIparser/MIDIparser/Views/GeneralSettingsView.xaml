@@ -3,6 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
              xmlns:local="clr-namespace:MIDIparser.Views"
              xmlns:localVm="clr-namespace:MIDIparser.ViewModels"
              mc:Ignorable="d" 
@@ -14,32 +15,55 @@
 
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition  Width="110px"/>
+            <ColumnDefinition  Width="105px"/>
             <ColumnDefinition />
-            <ColumnDefinition />
+            <ColumnDefinition  Width="160px"/>
+            <ColumnDefinition  Width="0.4*"/>
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
-            <RowDefinition  Height="60px"/>
-            <RowDefinition  Height="60px"/>
-            <RowDefinition  Height="60px"/>
-            <RowDefinition />
+            <RowDefinition  Height="30px"/>
+            <RowDefinition  Height="30px"/>
+            <RowDefinition  Height="30px"/>
+            <RowDefinition  Height="30px"/>
+            <RowDefinition  Height="30px"/>
+            <RowDefinition  Height="30px"/>
+            <RowDefinition  Height="30px"/>
+            <RowDefinition  Height="30px"/>
             <RowDefinition />
         </Grid.RowDefinitions>
-        <TextBlock Grid.Column="0" Grid.Row="0" Text="Scale:" VerticalAlignment="Center"  Margin="10 20 15 20" HorizontalAlignment="Right"/>
+        <TextBlock Grid.Column="0" Grid.Row="0" Text="Scale:" VerticalAlignment="Center"  Margin="10 5 10 5" HorizontalAlignment="Right"/>
         <Slider Grid.Column="1" Grid.Row="0" Margin="30 5 30 5" VerticalAlignment="Center"  Minimum="0" Maximum="6" SmallChange="1" LargeChange="1" TickFrequency="1" Value="{Binding PresentedScale}"/>
         <TextBlock Grid.Column="1" Grid.Row="0" Text="1x" HorizontalAlignment="Left" VerticalAlignment="Center"/>
         <TextBlock Grid.Column="1" Grid.Row="0" Text="100x" HorizontalAlignment="Right" VerticalAlignment="Center"/>
 
-        <TextBlock Grid.Column="0" Grid.Row="1" Text="Scroll to cursor:" VerticalAlignment="Center"  Margin="10 20 15 20" HorizontalAlignment="Right"/>
-        <CheckBox Grid.Column="1" Grid.Row="1" Margin="30 5 30 5" VerticalAlignment="Center" HorizontalAlignment="Left" IsChecked="{Binding ScrollToCursor}"/>
-
-        <TextBlock Grid.Column="0" Grid.Row="2" Text="Snap to Grid:" VerticalAlignment="Center"  Margin="10 20 15 20" HorizontalAlignment="Right"/>
-        <StackPanel Grid.Column="1" Grid.Row="2" VerticalAlignment="Center" Margin="10 0 0 0" Orientation="Horizontal" Grid.ColumnSpan="2"> 
+        <TextBlock Grid.Column="0" Grid.Row="1" Text="Snap to Grid:" VerticalAlignment="Center"  Margin="10 5 10 5" HorizontalAlignment="Right"/>
+        <StackPanel Grid.Column="1" Grid.Row="1" VerticalAlignment="Center" Margin="10 0 0 0" Orientation="Horizontal" Grid.ColumnSpan="1"> 
             <CheckBox   VerticalAlignment="Center" HorizontalAlignment="Left" IsChecked="{Binding SnapToGrid, Mode=TwoWay}"/>
-            <TextBlock x:Name="GridSizeTxtBlock" Margin="30 0 0 0" Text="Grid size:" />
+            <TextBlock x:Name="GridSizeTxtBlock" Margin="10 0 0 0" Text="Grid size:" />
             <TextBox  Margin="5 0 0 0" Width="60px" PreviewTextInput="NumberValidationTextBox" Text="{Binding GridSize, Mode=TwoWay}" IsEnabled="{Binding SnapToGrid}"/>
-            <TextBlock x:Name="GridPaddingTxtBlock" Margin="30 0 0 0" Text="Grid padding:" />
+            <TextBlock x:Name="GridPaddingTxtBlock" Margin="10 0 0 0" Text="Grid padding:" />
             <TextBox  Margin="5 0 0 0" Width="60px" PreviewTextInput="NumberValidationTextBox" Text="{Binding GridPadding, Mode=TwoWay}" IsEnabled="{Binding SnapToGrid}"/>
         </StackPanel>
+
+        <TextBlock Grid.Column="2" Grid.Row="0" Text="Up Arrow Color:" VerticalAlignment="Center"  Margin="10 5 10 5" HorizontalAlignment="Right"/>
+        <xctk:ColorPicker Grid.Column="3" Grid.Row="0" Margin="10 3 10 3"  SelectedColor="{Binding UpArrowColor}" ></xctk:ColorPicker>
+
+        <TextBlock Grid.Column="2" Grid.Row="1" Text="Right Arrow Color:" VerticalAlignment="Center"  Margin="10 5 10 5" HorizontalAlignment="Right"/>
+        <xctk:ColorPicker Grid.Column="3" Grid.Row="1" Margin="10 3 10 3"  SelectedColor="{Binding RightArrowColor}" ></xctk:ColorPicker>
+
+        <TextBlock Grid.Column="2" Grid.Row="2" Text="Left Arrow Color:" VerticalAlignment="Center"  Margin="10 5 10 5" HorizontalAlignment="Right"/>
+        <xctk:ColorPicker Grid.Column="3" Grid.Row="2" Margin="10 3 10 3" SelectedColor="{Binding LeftArrowColor}" ></xctk:ColorPicker>
+
+        <TextBlock Grid.Column="2" Grid.Row="3" Text="Down Arrow Color:" VerticalAlignment="Center"  Margin="10 5 10 5" HorizontalAlignment="Right"/>
+        <xctk:ColorPicker Grid.Column="3" Grid.Row="3" Margin="10 3 10 3" SelectedColor="{Binding DownArrowColor}" ></xctk:ColorPicker>
+
+        <TextBlock Grid.Column="2" Grid.Row="4" Text="BackGround  Color:" VerticalAlignment="Center"  Margin="10 5 10 5" HorizontalAlignment="Right"/>
+        <xctk:ColorPicker Grid.Column="3" Grid.Row="4" Margin="10 3 10 3" SelectedColor="{Binding BackgroundColor}" ></xctk:ColorPicker>
+
+        <TextBlock Grid.Column="2" Grid.Row="5" Text="UI background Color:" VerticalAlignment="Center"  Margin="10 5 10 5" HorizontalAlignment="Right"/>
+        <xctk:ColorPicker Grid.Column="3" Grid.Row="5" Margin="10 3 10 3" SelectedColor="{Binding UiColor}" ></xctk:ColorPicker>
+
+        <TextBlock Grid.Column="2" Grid.Row="6" Text="UI text Color:" VerticalAlignment="Center"  Margin="10 5 10 5" HorizontalAlignment="Right"/>
+        <xctk:ColorPicker Grid.Column="3" Grid.Row="6" Margin="10 3 10 3" SelectedColor="{Binding UiTextColor}" ></xctk:ColorPicker>
     </Grid>
 </UserControl>

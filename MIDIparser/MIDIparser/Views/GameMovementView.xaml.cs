@@ -31,7 +31,6 @@ namespace MIDIparser.Views
         private Line beginLine;
         private Line endLine;
         //grid settings
-        private bool checkScrollToCursor;
         private bool snapToGrid;
         private long gridSize;
         private long gridPadding;
@@ -140,7 +139,6 @@ namespace MIDIparser.Views
         }
         void GetScrollToCursor(OnGeneralSettingsChangeMessage msg)
         {
-            checkScrollToCursor = msg.scrollToCursor;
             snapToGrid = msg.snapToGrid;
             gridSize = msg.gridSize;
             gridPadding = msg.gridPadding;

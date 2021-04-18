@@ -9,7 +9,7 @@
         xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
         xmlns:ei="http://schemas.microsoft.com/expression/2010/interactions"
         mc:Ignorable="d"
-        Title="MIDI parser" Height="700" Width="800" MinHeight="500">
+        Title="MIDI parser" Height="700" Width="1000" MinHeight="500">
 
     <Window.DataContext>
         <localVm:MainWindowViewModel/>

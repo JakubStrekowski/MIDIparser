@@ -12,6 +12,7 @@ using MIDIparser.Views;
 using MIDIparser.Models;
 using System.Xml.Serialization;
 using System.IO;
+using System.Windows.Media;
 
 namespace MIDIparser.ViewModels
 {
@@ -24,6 +25,7 @@ namespace MIDIparser.ViewModels
         private int songPresentedSizeMultiplier;
         private int selectedChannel;
         private int tickPerSecond;
+        Color[] colorSettings;
 
         public long SongLength
         {
@@ -77,9 +79,12 @@ namespace MIDIparser.ViewModels
             SongPresentedSizeMultiplier = 10;
             SongLength = 10240;
             CurrentSongPosition = 0;
+            colorSettings = new Color[(int)EColorOptions.UiText + 1];
+
             EventSystem.Subscribe<OnMidiLoadedMessage>(CalculateMaxLength);
             EventSystem.Subscribe<OnMusicIsPlayingMessage>(GetCurrentPosition);
             EventSystem.Subscribe<OnSongPreviewScaleChangeMessage>(GetNewScale);
+            EventSystem.Subscribe<OnGeneralSettingsColorChangeMessage>(GetColorSettings);
             EventSystem.Subscribe<OnMovementChannelChangeMessage>(GetSelectedChannel);
             EventSystem.Subscribe<OnStartGeneratingMovesMessage>(StartGeneratingMoves);
             EventSystem.Subscribe<OnExportSendRawEventsMessage>(ExportMusicEvents);
@@ -104,6 +109,12 @@ namespace MIDIparser.ViewModels
         {
             SongPresentedSizeMultiplier = msg.newScale;
         }
+
+        public void GetColorSettings(OnGeneralSettingsColorChangeMessage msg)
+        {
+            colorSettings = msg.colorSettings;
+        }
+
         public void GetSelectedChannel(OnMovementChannelChangeMessage msg)
         {
             SelectedChannel = msg.channelID;
@@ -125,7 +136,8 @@ namespace MIDIparser.ViewModels
             File.Copy(msg.musicFilePath, "Music/" + filename, true);
             string imageFileName = msg.imageFilePath.Split('\\').Last();
             File.Copy(msg.imageFilePath, "Music/" + imageFileName, true);
-            DancerSong newSong = new DancerSong(msg.musicEvents, msg.title, msg.description, tickPerSecond, filename, imageFileName);
+            ArgbColor[] colorsToSend = ConvertFromColorSettings(colorSettings);
+            DancerSong newSong = new DancerSong(msg.musicEvents, msg.title, msg.description, tickPerSecond, filename, imageFileName, colorsToSend);
             XmlSerializer xml = new XmlSerializer(typeof(DancerSong));
             xml.Serialize(writer, newSong);
             writer.Close();
@@ -276,6 +288,16 @@ namespace MIDIparser.ViewModels
                     }
                 }
             }
+        }
+
+        private ArgbColor[] ConvertFromColorSettings(Color[] cs)
+        {
+            ArgbColor[] colorsToReturn = new ArgbColor[cs.Length];
+            for(int i = 0; i < cs.Length; i++)
+            {
+                colorsToReturn[i] = new ArgbColor(cs[i].A, cs[i].R, cs[i].G, cs[i].B);
+            }
+            return colorsToReturn;
         }
     }
 }
