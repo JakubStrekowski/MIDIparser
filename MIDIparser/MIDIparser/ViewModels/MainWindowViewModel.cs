@@ -205,31 +205,47 @@ namespace MIDIparser.ViewModels
         #region commandMethods
         private void OpenMidiFile()
         {
-            _dancerSong = new DancerSong();
-            OpenFileDialog openFileDialog = new OpenFileDialog
+            try
             {
-                Filter = "MIDI files (*.mid)|*.mid;",
-                InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments)
-            };
-            if (openFileDialog.ShowDialog() == true)
-            {
-                SelectedNote = null;
-                _dancerSong.Midi = MidiFile.Read(openFileDialog.FileName);
-                ParsedNotes=_midiEventsTextParser.ParseFromMidFormat(_dancerSong.Midi);
-                channelId = 0;
-                ChannelTitles = _midiEventsTextParser.ChannelTitles;
-                PresentedNotes = _midiEventsTextParser.NotesInChannel[0];
-                selectedNotes = new ObservableCollection<Note>();
-                SplitByChannels();
-                SelectedChannel = "All channels";
-                EventSystem.Publish<OnMidiLoadedMessage>(
-                    new OnMidiLoadedMessage
+                _dancerSong = new DancerSong();
+                OpenFileDialog openFileDialog = new OpenFileDialog
+                {
+                    Filter = "MIDI files (*.mid)|*.mid;",
+                    InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments)
+                };
+                if (openFileDialog.ShowDialog() == true)
+                {
+                    SelectedNote = null;
+                    _dancerSong.Midi = MidiFile.Read(openFileDialog.FileName);
+                    ParsedNotes = _midiEventsTextParser.ParseFromMidFormat(_dancerSong.Midi);
+                    channelId = 0;
+                    ChannelTitles = _midiEventsTextParser.ChannelTitles;
+                    PresentedNotes = _midiEventsTextParser.NotesInChannel[0];
+                    selectedNotes = new ObservableCollection<Note>();
+                    SplitByChannels();
+                    SelectedChannel = "All channels";
+                    TicksPerQuarterNoteTimeDivision td = playback.TempoMap.TimeDivision as TicksPerQuarterNoteTimeDivision;
+                    if (td is null)
                     {
-                        midiChannels = this.midiChannels,
-                        playback = this.playback,
-                        midiChannelsTitles = this.channelTitles,
-                        ticksPerQuarterNote = 100
-                    });
+                        throw new NotSupportedException("Time division in this MIDI file is not supported by this application.");
+                    }
+                    MetricTimeSpan metricTime = TimeConverter.ConvertTo<MetricTimeSpan>(td.TicksPerQuarterNote, playback.TempoMap);
+                    _dancerSong.ticksPerSecond = td.TicksPerQuarterNote * 1000 / (metricTime.Seconds * 1000 + metricTime.Milliseconds);
+
+                    EventSystem.Publish<OnMidiLoadedMessage>(
+                        new OnMidiLoadedMessage
+                        {
+                            midiChannels = this.midiChannels,
+                            playback = this.playback,
+                            midiChannelsTitles = this.channelTitles,
+                            ticksPerSecond = _dancerSong.ticksPerSecond,
+                            ticksPerquarterNote = td.TicksPerQuarterNote
+                        });
+                }
+            }
+            catch(NotSupportedException ex)
+            {
+                MessageBox.Show(ex.Message);
             }
         }
 

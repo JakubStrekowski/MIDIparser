@@ -25,6 +25,8 @@ namespace MIDIparser.Models
         public string title; //song title
         [XmlElement("Description")]
         public string additionaldesc; //song additional description
+        [XmlElement("TicksPerSecond")]
+        public int ticksPerSecond; //how many midi time units counts as a second
         [XmlElement("DancerEvents")]
         public DancerEvents dancerEvents;
 
@@ -33,11 +35,12 @@ namespace MIDIparser.Models
             dancerEvents = new DancerEvents();
         }
 
-        public DancerSong(DancerEvents dancerEvents,string title, string description, string pathToMusic, string pathToImage)
+        public DancerSong(DancerEvents dancerEvents, string title, string description, int ticksPerSecond, string pathToMusic, string pathToImage)
         {
             this.dancerEvents = dancerEvents;
             this.title = title;
             this.additionaldesc = description;
+            this.ticksPerSecond = ticksPerSecond;
             this.musicFilePath = pathToMusic;
             this.imagePreviewPath = pathToImage;
         }

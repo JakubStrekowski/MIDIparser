@@ -23,6 +23,7 @@ namespace MIDIparser.ViewModels
         private long currentSongPosition;
         private int songPresentedSizeMultiplier;
         private int selectedChannel;
+        private int tickPerSecond;
 
         public long SongLength
         {
@@ -56,7 +57,7 @@ namespace MIDIparser.ViewModels
                 SongLength = SongLength;
                 if (midiChannels != null)
                 {
-                    //RecalculateCanvasElements();
+                    RecalculateCanvasElements(0, songLength, true);
                 }
                 OnPropertyChange("SongPresentedSizeMultiplier");
             }
@@ -90,6 +91,7 @@ namespace MIDIparser.ViewModels
             SongPresentedSizeMultiplier = 10;
             midiChannels = msg.midiChannels;
             SongLength = TimeConverter.ConvertFrom(msg.playback.GetDuration(TimeSpanType.Midi), msg.playback.TempoMap);
+            tickPerSecond = msg.ticksPerSecond;
             //RecalculateCanvasElements();
         }
 
@@ -123,7 +125,7 @@ namespace MIDIparser.ViewModels
             File.Copy(msg.musicFilePath, "Music/" + filename, true);
             string imageFileName = msg.imageFilePath.Split('\\').Last();
             File.Copy(msg.imageFilePath, "Music/" + imageFileName, true);
-            DancerSong newSong = new DancerSong(msg.musicEvents, msg.title, msg.description, filename, imageFileName);
+            DancerSong newSong = new DancerSong(msg.musicEvents, msg.title, msg.description, tickPerSecond, filename, imageFileName);
             XmlSerializer xml = new XmlSerializer(typeof(DancerSong));
             xml.Serialize(writer, newSong);
             writer.Close();
@@ -136,7 +138,7 @@ namespace MIDIparser.ViewModels
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
-        private void RecalculateCanvasElements(double startTime, double endTime)
+        private void RecalculateCanvasElements(double startTime, double endTime, bool withCleanUp = false)
         {
             int NOTE_AVG_AMMNT = 10;
             float currentBaseToneAvg;
@@ -146,6 +148,16 @@ namespace MIDIparser.ViewModels
             int noteGroupMax;
             startTime *= SongPresentedSizeMultiplier;
             endTime *= SongPresentedSizeMultiplier;
+
+            if(withCleanUp)
+            {
+                EventSystem.Publish<OnRedrawMusicMovesMessage>(
+                new OnRedrawMusicMovesMessage
+                {
+                    posBegin = startTime / SongPresentedSizeMultiplier,
+                    posEnd = endTime / SongPresentedSizeMultiplier
+                });
+            }
 
             List<Note> notes = midiChannels.ToArray()[selectedChannel].GetNotes().ToList();
             for(int i = 0; i< notes.Count; i++)

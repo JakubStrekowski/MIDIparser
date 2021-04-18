@@ -118,7 +118,7 @@ namespace MIDIparser.ViewModels
         #region EventHandlers
         public void GetDefaultGridSize(OnMidiLoadedMessage msg)
         {
-            GridSize = msg.ticksPerQuarterNote;
+            GridSize = msg.ticksPerquarterNote;
             //RecalculateCanvasElements();
         }
 

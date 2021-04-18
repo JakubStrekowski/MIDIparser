@@ -14,6 +14,7 @@ namespace MIDIparser.EventMessages
         public IEnumerable<MidiFile> midiChannels;
         public Playback playback;
         public ObservableCollection<string> midiChannelsTitles;
-        public long ticksPerQuarterNote;
+        public int ticksPerSecond;
+        public int ticksPerquarterNote;
     }
 }
