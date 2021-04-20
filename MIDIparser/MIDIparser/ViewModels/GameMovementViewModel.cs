@@ -19,6 +19,8 @@ namespace MIDIparser.ViewModels
 
     class GameMovementViewModel : INotifyPropertyChanged
     {
+        private readonly string LEVEL_CATALOG_NAME = "CreatedMusicLevels";
+
         private IEnumerable<MidiFile> midiChannels;
         private long songLength;
         private long currentSongPosition;
@@ -130,12 +132,13 @@ namespace MIDIparser.ViewModels
             {
                 musicEvent.RecalculateTime(SongPresentedSizeMultiplier, msg.maxMoveTapThreshold);
             }
-            System.IO.Directory.CreateDirectory("Music");
-            System.IO.TextWriter writer = new StreamWriter("Music/test.xml");
+            System.IO.Directory.CreateDirectory(LEVEL_CATALOG_NAME);
+            System.IO.Directory.CreateDirectory(LEVEL_CATALOG_NAME + '/' + msg.title);
+            System.IO.TextWriter writer = new StreamWriter(LEVEL_CATALOG_NAME + "/" + msg.title + "/" + msg.title + ".xml");
             string filename = msg.musicFilePath.Split('\\').Last();
-            File.Copy(msg.musicFilePath, "Music/" + filename, true);
+            File.Copy(msg.musicFilePath, LEVEL_CATALOG_NAME + "/" + msg.title + "/" + filename, true);
             string imageFileName = msg.imageFilePath.Split('\\').Last();
-            File.Copy(msg.imageFilePath, "Music/" + imageFileName, true);
+            File.Copy(msg.imageFilePath, LEVEL_CATALOG_NAME + "/" + msg.title + "/" + imageFileName, true);
             ArgbColor[] colorsToSend = ConvertFromColorSettings(colorSettings);
             DancerSong newSong = new DancerSong(msg.musicEvents, msg.title, msg.description, tickPerSecond, filename, imageFileName, colorsToSend);
             XmlSerializer xml = new XmlSerializer(typeof(DancerSong));
