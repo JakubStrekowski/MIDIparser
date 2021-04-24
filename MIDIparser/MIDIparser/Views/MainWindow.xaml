@@ -76,7 +76,9 @@
 
                 </TabItem>
                 <TabItem Header="Effects">
-
+                    <localView:VisualEventsView>
+                        
+                    </localView:VisualEventsView>
                 </TabItem>
                 <TabItem Header="Export">
                     <localView:ExportSettingsView>
