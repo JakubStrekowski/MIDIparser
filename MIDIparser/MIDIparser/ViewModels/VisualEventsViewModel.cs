@@ -1,15 +1,278 @@
-﻿using System;
+﻿using Microsoft.Win32;
+using MIDIparser.EventMessages;
+using MIDIparser.Helpers;
+using MIDIparser.Models;
+using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Input;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
 
 namespace MIDIparser.ViewModels
 {
     class VisualEventsViewModel : INotifyPropertyChanged
     {
+        private static VisualEventsViewModel _instance;
 
+        public VisualEventsViewModel Instance
+        {
+            get => _instance;
+            set => _instance = value;
+        }
+
+        private IEnumerable<string> eventTypesToSelect = new List<string> {"CreateObject",
+        "DeleteObject",
+        "ChangeColorObjectLinear",
+        "ChangeColorObjectArc",
+        "ChangePosObjectLinear",
+        "ChangePosObjectArc"};
+        private int selectedEventType;
+        private ObservableCollection<VisualEventBase> allVisualEvents;
+        private int selectedEventID;
+        private VisualEventBase selectedEvent;
+        private int nextObjectID = 0;
+
+        public VisualEventsViewModel()
+        {
+            if (Instance == null)
+            {
+                Instance = this;
+            }
+
+            allVisualEvents = new ObservableCollection<VisualEventBase>();
+            SelectedEventType = 0;
+            EventSystem.Subscribe<OnAskForVisualEventsMessage>(SendEventsCollection);
+        }
+
+        public IEnumerable<string> EventTypesToSelect
+        {
+            get => eventTypesToSelect;
+            private set
+            {
+                eventTypesToSelect = value;
+                OnPropertyChange("EventTypesToSelect");
+            }
+        }
+
+        public int SelectedEventType
+        {
+            get => selectedEventType;
+            set
+            {
+                selectedEventType = value;
+                OnPropertyChange("SelectedEventType");
+            }
+        }
+
+        public int SelectedEventID
+        {
+            get => selectedEventID;
+            set
+            {
+                selectedEventID = value;
+                OnPropertyChange("SelectedEventID");
+            }
+        }
+
+        public VisualEventBase SelectedEvent
+        {
+            get
+            {
+                if (allVisualEvents.Count <= SelectedEventID)
+                {
+                    return null;
+                }
+                return allVisualEvents[SelectedEventID];
+            }
+            set
+            {
+                selectedEvent = value;
+                SelectedEventID = allVisualEvents.IndexOf(selectedEvent);
+                OnPropertyChange("SelectedEvent");
+            }
+        }
+
+        public ObservableCollection<VisualEventBase> AllVisualEvents
+        {
+            get => allVisualEvents;
+            private set
+            {
+                allVisualEvents = value;
+                OnPropertyChange("AllVisualEvents");
+            }
+        }
+
+        #region effectParams
+        private long startTime;
+        //create
+        private string spritePath;
+        BitmapImage previewImage;
+        //setColor
+        private Color color;
+        //linear/arc  events
+        private long eventDuration;
+
+        public long StartTime
+        {
+            get => startTime;
+            set
+            {
+                startTime = value;
+                OnPropertyChange("StartTime");
+            }
+        }
+
+        public string SpritePath
+        {
+            get => spritePath;
+            set
+            {
+                spritePath = value;
+                OnPropertyChange("SpritePath");
+            }
+        }
+
+        public Color Color
+        {
+            get => color;
+            set
+            {
+                color = value;
+                OnPropertyChange("Color");
+            }
+        }
+
+        public long EventDuration
+        {
+            get => eventDuration;
+            set
+            {
+                eventDuration = value;
+                OnPropertyChange("EventDuration");
+            }
+        }
+
+        public BitmapImage SpritePreview
+        {
+            get => previewImage;
+            set
+            {
+                previewImage = value;
+                OnPropertyChange("SpritePreview");
+            }
+        }
+        #endregion
+
+
+        #region commands
+        private ICommand _cmdCreateEvent;
+        private ICommand _cmdSetSprite;
+
+
+        public ICommand CmdCreateEvent
+        {
+            get
+            {
+                if (_cmdCreateEvent == null)
+                {
+                    _cmdCreateEvent = new RelayCommand<ICommand>(x => CreateEvent());
+                }
+                return _cmdCreateEvent;
+            }
+        }
+        public ICommand CmdSetSprite
+        {
+            get
+            {
+                if (_cmdSetSprite == null)
+                {
+                    _cmdSetSprite = new RelayCommand<ICommand>(x => SelectImageFile());
+                }
+                return _cmdSetSprite;
+            }
+        }
+        #endregion
+        #region commandMethods
+        void CreateEvent()
+        {
+            switch (SelectedEventType)
+            {
+                case (int)VisualEventTypeEnum.CreateObject:
+                    {
+                        try
+                        {
+                            allVisualEvents.Add(VisualEffectsFactory.InstantiateCreateDestroyEvent(nextObjectID, StartTime,
+                                VisualEventTypeEnum.CreateObject, allVisualEvents.ToList(), SpritePath));
+                            OnPropertyChange("AllVisualEvents");
+                            nextObjectID++;
+                        }
+                        catch (Exception ex)
+                        {
+                            MessageBox.Show(ex.Message);
+                        }
+                        break;
+                    }
+                case (int)VisualEventTypeEnum.DeleteObject:
+                    {
+                        try
+                        {
+                            allVisualEvents.Add(VisualEffectsFactory.InstantiateCreateDestroyEvent(SelectedEvent.objectId, StartTime,
+                                VisualEventTypeEnum.DeleteObject, allVisualEvents.ToList()));
+                            OnPropertyChange("AllVisualEvents");
+                        }
+                        catch (Exception ex)
+                        {
+                            MessageBox.Show(ex.Message);
+                        }
+                        break;
+                    }
+                case (int)VisualEventTypeEnum.ChangeColorObjectLinear:
+                    {
+                        try
+                        {
+                            allVisualEvents.Add(VisualEffectsFactory.InstantiateChangeColorLinearEvent(SelectedEvent.objectId, StartTime,
+                                VisualEventTypeEnum.ChangeColorObjectLinear, allVisualEvents.ToList(), new ArgbColor(Color), EventDuration));
+                            OnPropertyChange("AllVisualEvents");
+                        }
+                        catch (Exception ex)
+                        {
+                            MessageBox.Show(ex.Message);
+                        }
+                        break;
+                    }
+                default: break;
+            }
+        }
+        private void SelectImageFile()
+        {
+            OpenFileDialog openFileDialog = new OpenFileDialog
+            {
+                Filter = "Image files (*.png)|*.png",
+                InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments)
+            };
+            if (openFileDialog.ShowDialog() == true)
+            {
+                SpritePath = new string(openFileDialog.FileName.ToCharArray());
+                SpritePreview = new BitmapImage(new Uri(openFileDialog.FileName));
+            }
+        }
+        #endregion
+
+        #region Events
+        void SendEventsCollection(OnAskForVisualEventsMessage msg)
+        {
+            EventSystem.Publish(new OnSendBackVisualEventsMessage
+            {
+                allVisualEvents = this.allVisualEvents
+            });
+        }
+        #endregion
 
         public event PropertyChangedEventHandler PropertyChanged;
         protected void OnPropertyChange(string propertyName)

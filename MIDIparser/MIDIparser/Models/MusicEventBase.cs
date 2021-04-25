@@ -17,8 +17,6 @@ namespace MIDIparser.Models
         ArrowRightDuration,
         ArrowLeftDuration,
         ArrowDownDuration,
-
-        ChangeBackground,
     }
 
     [Serializable]

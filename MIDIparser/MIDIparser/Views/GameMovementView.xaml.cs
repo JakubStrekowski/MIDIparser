@@ -22,6 +22,8 @@ namespace MIDIparser.Views
     /// </summary>
     public partial class GameMovementView : UserControl
     {
+        
+
         private readonly Color[] channelToColor = { Color.FromRgb(0x95, 0xff, 0xff), Color.FromRgb(0x95, 0xff, 0x9c), Color.FromRgb(0xa8, 0x95, 0xff), Color.FromRgb(0xff, 0xd3, 0x95)};
         //note creation
         private bool isCreatingMove;
@@ -37,6 +39,11 @@ namespace MIDIparser.Views
         //export
         private DancerEvents musicEventsRaw;
         private long maxTapMoveThreshold;
+        private string songTitle;
+        private string songDesc;
+        private string songMusicFilePath;
+        private string songImageFilePath;
+
         public GameMovementView()
         {
             InitializeComponent();
@@ -45,6 +52,7 @@ namespace MIDIparser.Views
             EventSystem.Subscribe<OnGeneralSettingsChangeMessage>(GetScrollToCursor);
             EventSystem.Subscribe<OnChangePreviewControlMessage>(GetPreviewControlChange);
             EventSystem.Subscribe<OnStartExportMessage>(ParseAllMusicEvents);
+            EventSystem.Subscribe<OnSendBackVisualEventsMessage>(BeginExporting);
             musicEventsRaw = new DancerEvents();
         }
 
@@ -85,17 +93,31 @@ namespace MIDIparser.Views
                 }
             }
 
+            songTitle = msg.title;
+            songDesc = msg.description;
+            songImageFilePath = msg.imageFilePath;
+            songMusicFilePath = msg.musicFilePath;
+
+
+            EventSystem.Publish(new OnAskForVisualEventsMessage());
+        }
+
+        void BeginExporting(OnSendBackVisualEventsMessage msg)
+        {
+            musicEventsRaw.visualEvents = msg.allVisualEvents;
+
             EventSystem.Publish(
                 new OnExportSendRawEventsMessage
                 {
                     musicEvents = this.musicEventsRaw,
                     maxMoveTapThreshold = this.maxTapMoveThreshold,
-                    musicFilePath = msg.musicFilePath,
-                    imageFilePath = msg.imageFilePath,
-                    title = msg.title,
-                    description = msg.description
+                    musicFilePath = songMusicFilePath,
+                    imageFilePath = songImageFilePath,
+                    title = songTitle,
+                    description = songDesc
                 });
         }
+
         void DrawNewElement(OnCreateNoteElementMessage msg)
         {
             MakeNoteRectangle(msg.channelID, msg.startTime, msg.duration);

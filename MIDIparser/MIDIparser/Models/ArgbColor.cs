@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Media;
 using System.Xml.Serialization;
 
 namespace MIDIparser.Models
@@ -32,5 +33,12 @@ namespace MIDIparser.Models
             blue = b;
         }
 
+        public ArgbColor(Color color)
+        {
+            alpha = color.A;
+            red = color.R;
+            green = color.G;
+            blue = color.B;
+        }
     }
 }

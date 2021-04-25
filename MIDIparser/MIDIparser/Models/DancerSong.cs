@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Media;
 using System.Xml.Serialization;
+using MIDIparser.Models.VisualEventsSubclasses;
 
 namespace MIDIparser.Models
 {
@@ -15,6 +16,9 @@ namespace MIDIparser.Models
     [XmlInclude(typeof(MusicMovementEvent))]
     [XmlInclude(typeof(DancerEvents))]
     [XmlInclude(typeof(ArgbColor))]
+    [XmlInclude(typeof(VisualEventBase))]
+    [XmlInclude(typeof(CreateDeleteVisualEvent))]
+    [XmlInclude(typeof(ChangeColorLinearVisualEffect))]
     public class DancerSong
     {
         [XmlIgnore]

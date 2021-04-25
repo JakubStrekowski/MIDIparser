@@ -10,6 +10,7 @@ using System.Text;
 using System.Threading.Tasks;
 using MIDIparser.Views;
 using MIDIparser.Models;
+using MIDIparser.Models.VisualEventsSubclasses;
 using System.Xml.Serialization;
 using System.IO;
 using System.Windows.Media;
@@ -139,6 +140,20 @@ namespace MIDIparser.ViewModels
             File.Copy(msg.musicFilePath, LEVEL_CATALOG_NAME + "/" + msg.title + "/" + filename, true);
             string imageFileName = msg.imageFilePath.Split('\\').Last();
             File.Copy(msg.imageFilePath, LEVEL_CATALOG_NAME + "/" + msg.title + "/" + imageFileName, true);
+            //do the same to event objects spries
+            foreach(VisualEventBase evnt in msg.musicEvents.visualEvents)
+            {
+                if(evnt.eventType == VisualEventTypeEnum.CreateObject)
+                {
+                    string fileName = evnt.paramsList[0].Split('\\').Last();
+                    if (!(File.Exists(LEVEL_CATALOG_NAME + "/" + msg.title + "/" + fileName)))
+                    {
+                        File.Copy(evnt.paramsList[0], LEVEL_CATALOG_NAME + "/" + msg.title + "/" + fileName, true);
+                    }
+                    evnt.paramsList[0] = fileName;
+                }
+            }
+
             ArgbColor[] colorsToSend = ConvertFromColorSettings(colorSettings);
             DancerSong newSong = new DancerSong(msg.musicEvents, msg.title, msg.description, tickPerSecond, filename, imageFileName, colorsToSend);
             XmlSerializer xml = new XmlSerializer(typeof(DancerSong));
