@@ -8,7 +8,7 @@ namespace MIDIparser.Models.VisualEventsSubclasses
 {
     public enum VisualEventsSubclassesParamsEnum
     {
-        red,
+        red = 0,
         green,
         blue,
         alpha,
@@ -37,8 +37,8 @@ namespace MIDIparser.Models.VisualEventsSubclasses
         }
         public override string ListRepresentation
         {
-            get { return objectId.ToString() + " " + eventType.ToString() + " " + startTime.ToString() + " a" + paramsList[3] + " r" + paramsList[0] + " g" + paramsList[1] 
-                    + " b" + paramsList[2]; }
+            get { return objectId.ToString() + " " + startTime.ToString() + " - " + (startTime + float.Parse(paramsList[(int)VisualEventsSubclassesParamsEnum.timeToReach])) + " COLOR : a" 
+                    + paramsList[3] + " r" + paramsList[0] + " g" + paramsList[1]  + " b" + paramsList[2]; }
         }
     }
 }

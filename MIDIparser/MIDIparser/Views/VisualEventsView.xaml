@@ -58,10 +58,27 @@
 
                         </localParamViews:ChangeColorLinearParamView>
                     </TabItem>
+                    <TabItem Header="ChangeColorLinear" Visibility="Collapsed">
+                        <localParamViews:ChangeColorLinearParamView>
+
+                        </localParamViews:ChangeColorLinearParamView>
+                    </TabItem>
+                    <TabItem Header="ChangePosLinear" Visibility="Collapsed">
+                        <localParamViews:ChangePositionLinearParamView>
+
+                        </localParamViews:ChangePositionLinearParamView>
+                    </TabItem>
+                    <TabItem Header="ChangePosLinear" Visibility="Collapsed">
+                        <localParamViews:ChangePositionLinearParamView>
+
+                        </localParamViews:ChangePositionLinearParamView>
+                    </TabItem>
                 </TabControl>
             </GroupBox>
         </Grid>
-
-        <Button Grid.Row="1" HorizontalAlignment="Right" Margin="5" Height="40px" Width="80px" Content="Create Event" Command="{Binding CmdCreateEvent}"/>
+        <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Bottom">
+            <Button HorizontalAlignment="Right" Margin="5" Height="40px" Width="80px" Content="Delete Event" Background="LightSlateGray" Command="{Binding CmdDeleteEvent}"/>
+            <Button HorizontalAlignment="Right" Margin="5" Height="40px" Width="80px" Content="Create Event" Command="{Binding CmdCreateEvent}"/>
+        </StackPanel>
     </Grid>
 </UserControl>

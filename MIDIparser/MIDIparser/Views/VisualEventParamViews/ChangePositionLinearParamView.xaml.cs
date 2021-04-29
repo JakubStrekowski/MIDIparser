@@ -17,15 +17,14 @@ using System.Windows.Shapes;
 namespace MIDIparser.Views.VisualEventParamViews
 {
     /// <summary>
-    /// Interaction logic for CreateParamView.xaml
+    /// Interaction logic for ChangePositionLinearParamView.xaml
     /// </summary>
-    public partial class CreateParamView : UserControl
+    public partial class ChangePositionLinearParamView : UserControl
     {
-        public CreateParamView()
+        public ChangePositionLinearParamView()
         {
             InitializeComponent();
         }
-
         private void NumberValidationTextBox(object sender, TextCompositionEventArgs e)
         {
             Regex regex = new Regex("[^0-9]+");
@@ -33,7 +32,6 @@ namespace MIDIparser.Views.VisualEventParamViews
         }
         private void DecimalValidationTextBox(object sender, System.Windows.Input.TextCompositionEventArgs e)
         {
-
             bool approvedDecimalPoint = false;
             bool approvedMinusOnFront = false;
 

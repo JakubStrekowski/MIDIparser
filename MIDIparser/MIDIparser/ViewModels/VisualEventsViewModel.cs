@@ -67,6 +67,7 @@ namespace MIDIparser.ViewModels
             {
                 selectedEventType = value;
                 OnPropertyChange("SelectedEventType");
+                OnPropertyChange("EventTypesToSelect");
             }
         }
 
@@ -94,7 +95,9 @@ namespace MIDIparser.ViewModels
             {
                 selectedEvent = value;
                 SelectedEventID = allVisualEvents.IndexOf(selectedEvent);
+                SelectedEventType = (int)SelectedEvent.eventType;
                 OnPropertyChange("SelectedEvent");
+                OnPropertyChange("AllVisualEvents");
             }
         }
 
@@ -117,6 +120,12 @@ namespace MIDIparser.ViewModels
         private Color color;
         //linear/arc  events
         private long eventDuration;
+        //positioning
+        private float posX;
+        private float posY;
+        private float posZ;
+
+
 
         public long StartTime
         {
@@ -167,12 +176,40 @@ namespace MIDIparser.ViewModels
                 OnPropertyChange("SpritePreview");
             }
         }
+        public float PosX
+        {
+            get => posX;
+            set
+            {
+                posX = value;
+                OnPropertyChange("PosX");
+            }
+        }
+        public float PosY
+        {
+            get => posY;
+            set
+            {
+                posY = value;
+                OnPropertyChange("PosY");
+            }
+        }
+        public float PosZ
+        {
+            get => posZ;
+            set
+            {
+                posZ = value;
+                OnPropertyChange("PosZ");
+            }
+        }
         #endregion
 
 
         #region commands
         private ICommand _cmdCreateEvent;
         private ICommand _cmdSetSprite;
+        private ICommand _cmdDeleteEvent;
 
 
         public ICommand CmdCreateEvent
@@ -197,6 +234,17 @@ namespace MIDIparser.ViewModels
                 return _cmdSetSprite;
             }
         }
+        public ICommand CmdDeleteEvent
+        {
+            get
+            {
+                if (_cmdDeleteEvent == null)
+                {
+                    _cmdDeleteEvent = new RelayCommand<ICommand>(x => DeleteSelectedEvent());
+                }
+                return _cmdDeleteEvent;
+            }
+        }
         #endregion
         #region commandMethods
         void CreateEvent()
@@ -208,7 +256,7 @@ namespace MIDIparser.ViewModels
                         try
                         {
                             allVisualEvents.Add(VisualEffectsFactory.InstantiateCreateDestroyEvent(nextObjectID, StartTime,
-                                VisualEventTypeEnum.CreateObject, allVisualEvents.ToList(), SpritePath));
+                                VisualEventTypeEnum.CreateObject, allVisualEvents.ToList(), SpritePath, PosX, PosY));
                             OnPropertyChange("AllVisualEvents");
                             nextObjectID++;
                         }
@@ -246,6 +294,20 @@ namespace MIDIparser.ViewModels
                         }
                         break;
                     }
+                case (int)VisualEventTypeEnum.ChangePosObjectLinear:
+                    {
+                        try
+                        {
+                            allVisualEvents.Add(VisualEffectsFactory.InstantiateChangePositionLinearEvent(SelectedEvent.objectId, StartTime,
+                                VisualEventTypeEnum.ChangePosObjectLinear, allVisualEvents.ToList(), EventDuration, PosX, PosY));
+                            OnPropertyChange("AllVisualEvents");
+                        }
+                        catch (Exception ex)
+                        {
+                            MessageBox.Show(ex.Message);
+                        }
+                        break;
+                    }
                 default: break;
             }
         }
@@ -262,6 +324,30 @@ namespace MIDIparser.ViewModels
                 SpritePreview = new BitmapImage(new Uri(openFileDialog.FileName));
             }
         }
+
+        private void DeleteSelectedEvent()
+        {
+            try
+            {
+                if (selectedEvent.eventType == VisualEventTypeEnum.CreateObject)
+                {
+                    if (allVisualEvents.ToList().Exists(x => x.objectId == selectedEvent.objectId && x.eventType != VisualEventTypeEnum.CreateObject))
+                    {
+                        throw new Exception("Can't delete 'Create' event when there are already other events binded to this object. Delete other events first");
+                    }
+                    AllVisualEvents.Remove(SelectedEvent);
+                }
+                else
+                {
+                    AllVisualEvents.Remove(SelectedEvent);
+                }
+            }
+            catch(Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+        }
+
         #endregion
 
         #region Events

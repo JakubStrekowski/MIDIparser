@@ -19,6 +19,7 @@ namespace MIDIparser.Models
     [XmlInclude(typeof(VisualEventBase))]
     [XmlInclude(typeof(CreateDeleteVisualEvent))]
     [XmlInclude(typeof(ChangeColorLinearVisualEffect))]
+    [XmlInclude(typeof(ChangePositionLinearVisualEffect))]
     public class DancerSong
     {
         [XmlIgnore]
