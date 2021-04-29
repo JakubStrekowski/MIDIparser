@@ -11,7 +11,7 @@ namespace MIDIparser.Helpers
     class VisualEffectsFactory
     {
         public static VisualEventBase InstantiateCreateDestroyEvent(int objectID, long startTime, VisualEventTypeEnum type, List<VisualEventBase> allEvents
-            , string imagePath = null)
+            , string imagePath = null, float posX = 0, float posY = 0)
         {
             if(type == VisualEventTypeEnum.CreateObject)
             {
@@ -22,7 +22,7 @@ namespace MIDIparser.Helpers
                 else
                 {
                     if(imagePath == "" || imagePath is null) throw new Exception("Sprite object has to have any image attached");
-                    return new CreateDeleteVisualEvent(objectID, startTime, type, imagePath);
+                    return new CreateDeleteVisualEvent(objectID, startTime, type, imagePath, posX , posY);
                 }
             }
             if (type == VisualEventTypeEnum.DeleteObject)
@@ -42,13 +42,26 @@ namespace MIDIparser.Helpers
         public static VisualEventBase InstantiateChangeColorLinearEvent(int objectID, long startTime, VisualEventTypeEnum type, List<VisualEventBase> allEvents,
             ArgbColor colorToSet, long timeToSet)
         {
-            if (type == VisualEventTypeEnum.ChangeColorObjectLinear && allEvents.Exists(x => x.objectId == objectID))
+            if (type == VisualEventTypeEnum.ChangeColorObjectLinear && allEvents.Exists(x => x.objectId == objectID) && !(allEvents.Exists(x => x.objectId == objectID && x.eventType == VisualEventTypeEnum.DeleteObject)))
             {
                 return new ChangeColorLinearVisualEffect(objectID, startTime, type, colorToSet, timeToSet);
             }
             else
             {
-                throw new Exception("Incorrect type or object doesn't exist");
+                throw new Exception("Incorrect type, object doesn't exist or object already deleted");
+            }
+        }
+
+        public static VisualEventBase InstantiateChangePositionLinearEvent(int objectID, long startTime, VisualEventTypeEnum type, List<VisualEventBase> allEvents,
+            long timeToSet, float posX, float posY)
+        {
+            if (type == VisualEventTypeEnum.ChangePosObjectLinear && allEvents.Exists(x => x.objectId == objectID) && !(allEvents.Exists(x=> x.objectId == objectID && x.eventType == VisualEventTypeEnum.DeleteObject)))
+            {
+                return new ChangePositionLinearVisualEffect(objectID, startTime, type, timeToSet, posX, posY);
+            }
+            else
+            {
+                throw new Exception("Incorrect type, object doesn't exist or object already deleted");
             }
         }
     }

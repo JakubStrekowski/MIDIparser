@@ -24,13 +24,13 @@
             <Label Content="Start Position: " VerticalAlignment="Center"/>
             <TextBox Margin="10 0 0 0"  Height="30" PreviewTextInput="NumberValidationTextBox" VerticalAlignment="Center" Width="100" Text="{Binding StartTime, Mode=TwoWay}"/>
         </StackPanel>
-        <StackPanel Grid.Row="1" Orientation="Horizontal" VerticalAlignment="Center">
+        <StackPanel Grid.Row="1" Orientation="Horizontal" VerticalAlignment="Center" >
             <Label Content="Duration: " VerticalAlignment="Center"/>
             <TextBox Margin="10 0 0 0"  Height="30" PreviewTextInput="NumberValidationTextBox" VerticalAlignment="Center" Width="100" Text="{Binding EventDuration, Mode=TwoWay}"/>
         </StackPanel>
         <StackPanel Grid.Row="2" Orientation="Horizontal" VerticalAlignment="Center">
-            <TextBlock Grid.Column="2" Grid.Row="1" Text="Change to color:" VerticalAlignment="Center"  Margin="10 0 0 0"/>
-            <xctk:ColorPicker Grid.Column="3" Grid.Row="1" Margin="2 3 2 3" Width="60px"  SelectedColor="{Binding Color}" ></xctk:ColorPicker>
+            <Label Content="Change to color:" VerticalAlignment="Center" />
+            <xctk:ColorPicker  Margin="2 3 2 3" Width="60px"  SelectedColor="{Binding Color}" ></xctk:ColorPicker>
         </StackPanel>
         
     </Grid>

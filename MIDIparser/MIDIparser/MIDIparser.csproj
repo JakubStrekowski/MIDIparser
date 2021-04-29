@@ -109,6 +109,7 @@
     <Compile Include="EventRaiser.cs" />
     <Compile Include="EventSystem.cs" />
     <Compile Include="Helpers\MidiEventsToTextParser.cs" />
+    <Compile Include="Helpers\TextBoxInputBehavior.cs" />
     <Compile Include="Helpers\VisualEffectsFactory.cs" />
     <Compile Include="Models\DancerEvents.cs" />
     <Compile Include="Models\MusicEventBase.cs" />
@@ -116,6 +117,7 @@
     <Compile Include="Models\ArgbColor.cs" />
     <Compile Include="Models\VisualEventBase.cs" />
     <Compile Include="Models\VisualEventsSubclasses\ChangeColorLinearVisualEffect.cs" />
+    <Compile Include="Models\VisualEventsSubclasses\ChangePositionLinearVisualEffect.cs" />
     <Compile Include="Models\VisualEventsSubclasses\CreateDeleteVisualEvent.cs" />
     <Compile Include="ViewModels\ExportSettingsViewModel.cs" />
     <Compile Include="ViewModels\GameMovementViewModel.cs" />
@@ -125,6 +127,9 @@
     <Compile Include="ViewModels\VisualEventsViewModel.cs" />
     <Compile Include="Views\VisualEventParamViews\ChangeColorLinearParamView.xaml.cs">
       <DependentUpon>ChangeColorLinearParamView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\VisualEventParamViews\ChangePositionLinearParamView.xaml.cs">
+      <DependentUpon>ChangePositionLinearParamView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\VisualEventParamViews\CreateParamView.xaml.cs">
       <DependentUpon>CreateParamView.xaml</DependentUpon>
@@ -178,6 +183,10 @@
       <SubType>Code</SubType>
     </Compile>
     <Page Include="Views\VisualEventParamViews\ChangeColorLinearParamView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\VisualEventParamViews\ChangePositionLinearParamView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
