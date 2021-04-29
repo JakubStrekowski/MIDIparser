@@ -109,6 +109,7 @@
     <Compile Include="EventRaiser.cs" />
     <Compile Include="EventSystem.cs" />
     <Compile Include="Helpers\MidiEventsToTextParser.cs" />
+    <Compile Include="Helpers\TextBoxInputBehavior.cs" />
     <Compile Include="Helpers\VisualEffectsFactory.cs" />
     <Compile Include="Models\DancerEvents.cs" />
     <Compile Include="Models\MusicEventBase.cs" />
