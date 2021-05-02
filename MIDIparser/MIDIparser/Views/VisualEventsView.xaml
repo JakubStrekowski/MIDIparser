@@ -58,20 +58,30 @@
 
                         </localParamViews:ChangeColorLinearParamView>
                     </TabItem>
-                    <TabItem Header="ChangeColorLinear" Visibility="Collapsed">
-                        <localParamViews:ChangeColorLinearParamView>
+                    <TabItem Header="ChangeColorArc" Visibility="Collapsed">
+                        <localParamViews:ChangeColorArcParamView>
 
-                        </localParamViews:ChangeColorLinearParamView>
+                        </localParamViews:ChangeColorArcParamView>
                     </TabItem>
                     <TabItem Header="ChangePosLinear" Visibility="Collapsed">
                         <localParamViews:ChangePositionLinearParamView>
 
                         </localParamViews:ChangePositionLinearParamView>
                     </TabItem>
-                    <TabItem Header="ChangePosLinear" Visibility="Collapsed">
-                        <localParamViews:ChangePositionLinearParamView>
+                    <TabItem Header="ChangePosArc" Visibility="Collapsed">
+                        <localParamViews:ChangePositionDampingParamView>
 
-                        </localParamViews:ChangePositionLinearParamView>
+                        </localParamViews:ChangePositionDampingParamView>
+                    </TabItem>
+                    <TabItem Header="ChangeRotLin" Visibility="Collapsed">
+                        <localParamViews:ChangeRotationLinearParamView>
+
+                        </localParamViews:ChangeRotationLinearParamView>
+                    </TabItem>
+                    <TabItem Header="ChangeRotArc" Visibility="Collapsed">
+                        <localParamViews:ChangeRotationArcParamView>
+
+                        </localParamViews:ChangeRotationArcParamView>
                     </TabItem>
                 </TabControl>
             </GroupBox>

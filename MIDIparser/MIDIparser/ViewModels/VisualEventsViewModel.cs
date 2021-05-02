@@ -31,7 +31,9 @@ namespace MIDIparser.ViewModels
         "ChangeColorObjectLinear",
         "ChangeColorObjectArc",
         "ChangePosObjectLinear",
-        "ChangePosObjectArc"};
+        "ChangePosObjectArc",
+        "ChangeRotObjectLinear",
+        "ChangeRotObjectArc"};
         private int selectedEventType;
         private ObservableCollection<VisualEventBase> allVisualEvents;
         private int selectedEventID;
@@ -125,6 +127,7 @@ namespace MIDIparser.ViewModels
         private float posY;
         private float posZ;
 
+        private float rotation;
 
 
         public long StartTime
@@ -203,6 +206,15 @@ namespace MIDIparser.ViewModels
                 OnPropertyChange("PosZ");
             }
         }
+        public float Rotation
+        {
+            get => rotation;
+            set
+            {
+                rotation = value;
+                OnPropertyChange("Rotation");
+            }
+        }
         #endregion
 
 
@@ -257,7 +269,6 @@ namespace MIDIparser.ViewModels
                         {
                             allVisualEvents.Add(VisualEffectsFactory.InstantiateCreateDestroyEvent(nextObjectID, StartTime,
                                 VisualEventTypeEnum.CreateObject, allVisualEvents.ToList(), SpritePath, PosX, PosY));
-                            OnPropertyChange("AllVisualEvents");
                             nextObjectID++;
                         }
                         catch (Exception ex)
@@ -272,7 +283,6 @@ namespace MIDIparser.ViewModels
                         {
                             allVisualEvents.Add(VisualEffectsFactory.InstantiateCreateDestroyEvent(SelectedEvent.objectId, StartTime,
                                 VisualEventTypeEnum.DeleteObject, allVisualEvents.ToList()));
-                            OnPropertyChange("AllVisualEvents");
                         }
                         catch (Exception ex)
                         {
@@ -286,7 +296,21 @@ namespace MIDIparser.ViewModels
                         {
                             allVisualEvents.Add(VisualEffectsFactory.InstantiateChangeColorLinearEvent(SelectedEvent.objectId, StartTime,
                                 VisualEventTypeEnum.ChangeColorObjectLinear, allVisualEvents.ToList(), new ArgbColor(Color), EventDuration));
-                            OnPropertyChange("AllVisualEvents");
+                            StartTime += EventDuration;
+                        }
+                        catch (Exception ex)
+                        {
+                            MessageBox.Show(ex.Message);
+                        }
+                        break;
+                    }
+                case (int)VisualEventTypeEnum.ChangeColorObjectArc:
+                    {
+                        try
+                        {
+                            allVisualEvents.Add(VisualEffectsFactory.InstantiateChangeColorArcEvent(SelectedEvent.objectId, StartTime,
+                                VisualEventTypeEnum.ChangeColorObjectArc, allVisualEvents.ToList(), new ArgbColor(Color), EventDuration));
+                            StartTime += EventDuration;
                         }
                         catch (Exception ex)
                         {
@@ -300,7 +324,49 @@ namespace MIDIparser.ViewModels
                         {
                             allVisualEvents.Add(VisualEffectsFactory.InstantiateChangePositionLinearEvent(SelectedEvent.objectId, StartTime,
                                 VisualEventTypeEnum.ChangePosObjectLinear, allVisualEvents.ToList(), EventDuration, PosX, PosY));
-                            OnPropertyChange("AllVisualEvents");
+                            StartTime += EventDuration;
+                        }
+                        catch (Exception ex)
+                        {
+                            MessageBox.Show(ex.Message);
+                        }
+                        break;
+                    }
+                case (int)VisualEventTypeEnum.ChangePosObjectArc:
+                    {
+                        try
+                        {
+                            allVisualEvents.Add(VisualEffectsFactory.InstantiateChangePositionDampingEvent(SelectedEvent.objectId, StartTime,
+                                VisualEventTypeEnum.ChangePosObjectArc, allVisualEvents.ToList(), EventDuration, PosX, PosY));
+                            StartTime += EventDuration;
+                        }
+                        catch (Exception ex)
+                        {
+                            MessageBox.Show(ex.Message);
+                        }
+                        break;
+                    }
+                case (int)VisualEventTypeEnum.ChangeRotObjectLinear:
+                    {
+                        try
+                        {
+                            allVisualEvents.Add(VisualEffectsFactory.InstantiateChangeRotationLinearEvent(SelectedEvent.objectId, StartTime,
+                                VisualEventTypeEnum.ChangeRotObjectLinear, allVisualEvents.ToList(), EventDuration, Rotation));
+                            StartTime += EventDuration;
+                        }
+                        catch (Exception ex)
+                        {
+                            MessageBox.Show(ex.Message);
+                        }
+                        break;
+                    }
+                case (int)VisualEventTypeEnum.ChangeRotObjectArc:
+                    {
+                        try
+                        {
+                            allVisualEvents.Add(VisualEffectsFactory.InstantiateChangeRotationArcEvent(SelectedEvent.objectId, StartTime,
+                                VisualEventTypeEnum.ChangeRotObjectArc, allVisualEvents.ToList(), EventDuration, Rotation));
+                            StartTime += EventDuration;
                         }
                         catch (Exception ex)
                         {
@@ -310,6 +376,8 @@ namespace MIDIparser.ViewModels
                     }
                 default: break;
             }
+            IOrderedEnumerable<VisualEventBase> ordered= allVisualEvents.OrderBy(x => x.objectId);
+            AllVisualEvents = new ObservableCollection<VisualEventBase>(ordered.ToList());
         }
         private void SelectImageFile()
         {
@@ -335,16 +403,38 @@ namespace MIDIparser.ViewModels
                     {
                         throw new Exception("Can't delete 'Create' event when there are already other events binded to this object. Delete other events first");
                     }
-                    AllVisualEvents.Remove(SelectedEvent);
+                    allVisualEvents.Remove(SelectedEvent);
                 }
                 else
                 {
-                    AllVisualEvents.Remove(SelectedEvent);
+                    allVisualEvents.Remove(SelectedEvent);
                 }
+                CheckObjectIDIntegrity();
+                OnPropertyChange("AllVisualEvents");
             }
             catch(Exception ex)
             {
                 MessageBox.Show(ex.Message);
+            }
+        }
+
+        void CheckObjectIDIntegrity()
+        {
+            int checkingID = 0;
+            for(int i = 0; i < allVisualEvents.Count; i++)
+            {
+                if (checkingID != allVisualEvents[i].objectId && checkingID == allVisualEvents[i].objectId + 1)
+                {
+                    checkingID++;
+                }
+                else if (checkingID != allVisualEvents[i].objectId && checkingID != allVisualEvents[i].objectId + 1)
+                {
+                    checkingID++;
+                    foreach(VisualEventBase visualEvent in allVisualEvents.Where(x=>x.objectId == allVisualEvents[i].objectId))
+                    {
+                        visualEvent.objectId = checkingID;
+                    }
+                }
             }
         }
 

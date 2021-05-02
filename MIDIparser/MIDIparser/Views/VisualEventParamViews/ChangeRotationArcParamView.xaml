@@ -1,4 +1,4 @@
-﻿<UserControl x:Class="MIDIparser.Views.VisualEventParamViews.CreateParamView"
+﻿<UserControl x:Class="MIDIparser.Views.VisualEventParamViews.ChangeRotationArcParamView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
@@ -25,18 +25,13 @@
             <Label Content="Start Position: " VerticalAlignment="Center"/>
             <TextBox Margin="10 0 0 0"  Height="30" PreviewTextInput="NumberValidationTextBox" VerticalAlignment="Center" Width="100" Text="{Binding StartTime, Mode=TwoWay}"/>
         </StackPanel>
-        <StackPanel Grid.Row="1" Orientation="Horizontal" VerticalAlignment="Center">
-            <Label Content="Sprite: " VerticalAlignment="Center"/>
-            <Button Content="Set" Width="35px" Height="35px" Margin="3" Command="{Binding CmdSetSprite}"></Button>
-            <Image Source="{Binding SpritePreview}" Width="50" Height="50" Stretch="Fill"/>
+        <StackPanel Grid.Row="1" Orientation="Horizontal" VerticalAlignment="Center" >
+            <Label Content="Duration: " VerticalAlignment="Center"/>
+            <TextBox Margin="10 0 0 0"  Height="30" PreviewTextInput="NumberValidationTextBox" VerticalAlignment="Center" Width="100" Text="{Binding EventDuration, Mode=TwoWay}"/>
         </StackPanel>
         <StackPanel Grid.Row="2" Orientation="Horizontal" VerticalAlignment="Center">
-            <Label Content="X pos [-11:11]: " VerticalAlignment="Center"/>
-            <TextBox Margin="10 0 0 0"  Height="30" PreviewTextInput="DecimalValidationTextBox" VerticalAlignment="Center" Width="100" Text="{Binding PosX, Mode=TwoWay}"/>
-        </StackPanel>
-        <StackPanel Grid.Row="3" Orientation="Horizontal" VerticalAlignment="Center">
-            <Label Content="Y pos [-1:8]: " VerticalAlignment="Center"/>
-            <TextBox Margin="10 0 0 0"  Height="30" PreviewTextInput="DecimalValidationTextBox" VerticalAlignment="Center" Width="100" Text="{Binding PosY, Mode=TwoWay}"/>
+            <Label Content="Rotation [º]: " VerticalAlignment="Center"/>
+            <TextBox Margin="10 0 0 0"  Height="30" PreviewTextInput="DecimalValidationTextBox" VerticalAlignment="Center" Width="100" Text="{Binding Rotation, Mode=TwoWay}"/>
         </StackPanel>
     </Grid>
 </UserControl>

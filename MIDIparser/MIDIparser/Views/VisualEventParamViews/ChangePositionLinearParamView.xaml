@@ -30,11 +30,11 @@
             <TextBox Margin="10 0 0 0"  Height="30" PreviewTextInput="NumberValidationTextBox" VerticalAlignment="Center" Width="100" Text="{Binding EventDuration, Mode=TwoWay}"/>
         </StackPanel>
         <StackPanel Grid.Row="2" Orientation="Horizontal" VerticalAlignment="Center">
-            <Label Content="X pos [-1:18]: " VerticalAlignment="Center"/>
+            <Label Content="X pos [-11:11]: " VerticalAlignment="Center"/>
             <TextBox Margin="10 0 0 0"  Height="30" PreviewTextInput="DecimalValidationTextBox" VerticalAlignment="Center" Width="100" Text="{Binding PosX, Mode=TwoWay}"/>
         </StackPanel>
         <StackPanel Grid.Row="3" Orientation="Horizontal" VerticalAlignment="Center">
-            <Label Content="Y pos [-10:1]: " VerticalAlignment="Center"/>
+            <Label Content="Y pos [-1:8]: " VerticalAlignment="Center"/>
             <TextBox Margin="10 0 0 0"  Height="30" PreviewTextInput="DecimalValidationTextBox" VerticalAlignment="Center" Width="100" Text="{Binding PosY, Mode=TwoWay}"/>
         </StackPanel>
     </Grid>
