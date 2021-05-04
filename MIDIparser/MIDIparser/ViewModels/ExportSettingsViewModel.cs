@@ -141,7 +141,7 @@ namespace MIDIparser.ViewModels
         {
             OpenFileDialog openFileDialog = new OpenFileDialog
             {
-                Filter = "MIDI files (*.mid)|*.mid;|Music files(*.mp3;*.wav)|*.mp3;*.wav",
+                Filter = "MIDI files (*.mid)|*.mid;|Music files(*.mp3;*.wav;*.ogg)|*.mp3;*.wav;*.ogg",
                 InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments)
             };
             if (openFileDialog.ShowDialog() == true)

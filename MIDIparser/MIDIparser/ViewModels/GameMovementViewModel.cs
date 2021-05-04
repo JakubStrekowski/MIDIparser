@@ -14,6 +14,7 @@ using MIDIparser.Models.VisualEventsSubclasses;
 using System.Xml.Serialization;
 using System.IO;
 using System.Windows.Media;
+using System.Windows;
 
 namespace MIDIparser.ViewModels
 {
@@ -137,21 +138,28 @@ namespace MIDIparser.ViewModels
             System.IO.Directory.CreateDirectory(LEVEL_CATALOG_NAME + '/' + msg.title);
             System.IO.TextWriter writer = new StreamWriter(LEVEL_CATALOG_NAME + "/" + msg.title + "/" + msg.title + ".xml");
             string filename = msg.musicFilePath.Split('\\').Last();
-            File.Copy(msg.musicFilePath, LEVEL_CATALOG_NAME + "/" + msg.title + "/" + filename, true);
             string imageFileName = msg.imageFilePath.Split('\\').Last();
-            File.Copy(msg.imageFilePath, LEVEL_CATALOG_NAME + "/" + msg.title + "/" + imageFileName, true);
-            //do the same to event objects spries
-            foreach(VisualEventBase evnt in msg.musicEvents.visualEvents)
+            try
             {
-                if(evnt.eventType == VisualEventTypeEnum.CreateObject)
+                File.Copy(msg.musicFilePath, LEVEL_CATALOG_NAME + "/" + msg.title + "/" + filename, true);
+                File.Copy(msg.imageFilePath, LEVEL_CATALOG_NAME + "/" + msg.title + "/" + imageFileName, true);
+                //do the same to event objects spries
+                foreach (VisualEventBase evnt in msg.musicEvents.visualEvents)
                 {
-                    string fileName = evnt.paramsList[0].Split('\\').Last();
-                    if (!(File.Exists(LEVEL_CATALOG_NAME + "/" + msg.title + "/" + fileName)))
+                    if(evnt.eventType == VisualEventTypeEnum.CreateObject)
                     {
-                        File.Copy(evnt.paramsList[0], LEVEL_CATALOG_NAME + "/" + msg.title + "/" + fileName, true);
+                        string fileName = evnt.paramsList[0].Split('\\').Last();
+                        if (!(File.Exists(LEVEL_CATALOG_NAME + "/" + msg.title + "/" + fileName)))
+                        {
+                            File.Copy(evnt.paramsList[0], LEVEL_CATALOG_NAME + "/" + msg.title + "/" + fileName, true);
+                        }
+                        evnt.paramsList[0] = fileName;
                     }
-                    evnt.paramsList[0] = fileName;
                 }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
             }
 
             ArgbColor[] colorsToSend = ConvertFromColorSettings(colorSettings);
