@@ -1,6 +1,10 @@
 # MIDIparser
 A WPF application to generate levels for my Unity project - Dancer
 
+Game repository:
+
+https://github.com/JakubStrekowski/Dancer
+
 Features:
 - Listen to MIDI file by all channels or select a separate one
 - Generate moves based on selected channel for a whole song or for a selected period of time
