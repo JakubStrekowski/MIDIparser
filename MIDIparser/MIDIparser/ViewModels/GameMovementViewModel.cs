@@ -146,7 +146,7 @@ namespace MIDIparser.ViewModels
                 //do the same to event objects spries
                 foreach (VisualEventBase evnt in msg.musicEvents.visualEvents)
                 {
-                    if(evnt.eventType == VisualEventTypeEnum.CreateObject)
+                    if(evnt.eventType == VisualEventTypeEnum.CreateObject || evnt.eventType == VisualEventTypeEnum.ChangeSprite)
                     {
                         string fileName = evnt.paramsList[0].Split('\\').Last();
                         if (!(File.Exists(LEVEL_CATALOG_NAME + "/" + msg.title + "/" + fileName)))

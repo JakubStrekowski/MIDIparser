@@ -121,6 +121,7 @@
     <Compile Include="Models\VisualEventsSubclasses\ChangePositionLinearVisualEffect.cs" />
     <Compile Include="Models\VisualEventsSubclasses\ChangeRotationArcVisualEffect.cs" />
     <Compile Include="Models\VisualEventsSubclasses\ChangeRotationLinearVisualEffect.cs" />
+    <Compile Include="Models\VisualEventsSubclasses\ChangeSpriteVisualEffect.cs" />
     <Compile Include="Models\VisualEventsSubclasses\CreateDeleteVisualEvent.cs" />
     <Compile Include="ViewModels\ExportSettingsViewModel.cs" />
     <Compile Include="ViewModels\GameMovementViewModel.cs" />
@@ -145,6 +146,9 @@
     </Compile>
     <Compile Include="Views\VisualEventParamViews\ChangeRotationLinearParamView.xaml.cs">
       <DependentUpon>ChangeRotationLinearParamView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\VisualEventParamViews\ChangeSpriteParamView.xaml.cs">
+      <DependentUpon>ChangeSpriteParamView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\VisualEventParamViews\CreateParamView.xaml.cs">
       <DependentUpon>CreateParamView.xaml</DependentUpon>
@@ -218,6 +222,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\VisualEventParamViews\ChangeRotationLinearParamView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\VisualEventParamViews\ChangeSpriteParamView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

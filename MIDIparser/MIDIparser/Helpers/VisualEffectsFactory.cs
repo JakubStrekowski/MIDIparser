@@ -116,6 +116,18 @@ namespace MIDIparser.Helpers
                 throw new Exception("Incorrect type, object doesn't exist or object already deleted");
             }
         }
+        public static VisualEventBase InstantiateChangeSpriteEvent(int objectID, long startTime, VisualEventTypeEnum type, List<VisualEventBase> allEvents
+            , string imagePath = null)
+        {
+            if (type == VisualEventTypeEnum.ChangeSprite && allEvents.Exists(x => x.objectId == objectID) && !(allEvents.Exists(x => x.objectId == objectID && x.eventType == VisualEventTypeEnum.DeleteObject)))
+            {
+                return new ChangeSpriteVisualEffect(objectID, startTime, type, imagePath);
+            }
+            else
+            {
+                throw new Exception("Incorrect type, object doesn't exist or object already deleted");
+            }
+        }
     }
 
 }

@@ -83,6 +83,11 @@
 
                         </localParamViews:ChangeRotationArcParamView>
                     </TabItem>
+                    <TabItem Header="ChangeSprite" Visibility="Collapsed">
+                        <localParamViews:ChangeSpriteParamView>
+
+                        </localParamViews:ChangeSpriteParamView>
+                    </TabItem>
                 </TabControl>
             </GroupBox>
         </Grid>

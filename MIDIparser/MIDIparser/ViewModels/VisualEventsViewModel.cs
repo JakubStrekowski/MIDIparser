@@ -33,7 +33,8 @@ namespace MIDIparser.ViewModels
         "ChangePosObjectLinear",
         "ChangePosObjectArc",
         "ChangeRotObjectLinear",
-        "ChangeRotObjectArc"};
+        "ChangeRotObjectArc",
+        "ChangeSprite"};
         private int selectedEventType;
         private ObservableCollection<VisualEventBase> allVisualEvents;
         private int selectedEventID;
@@ -367,6 +368,19 @@ namespace MIDIparser.ViewModels
                             allVisualEvents.Add(VisualEffectsFactory.InstantiateChangeRotationArcEvent(SelectedEvent.objectId, StartTime,
                                 VisualEventTypeEnum.ChangeRotObjectArc, allVisualEvents.ToList(), EventDuration, Rotation));
                             StartTime += EventDuration;
+                        }
+                        catch (Exception ex)
+                        {
+                            MessageBox.Show(ex.Message);
+                        }
+                        break;
+                    }
+                case (int)VisualEventTypeEnum.ChangeSprite:
+                    {
+                        try
+                        {
+                            allVisualEvents.Add(VisualEffectsFactory.InstantiateChangeSpriteEvent(SelectedEvent.objectId, StartTime,
+                                VisualEventTypeEnum.ChangeSprite, allVisualEvents.ToList(), SpritePath));
                         }
                         catch (Exception ex)
                         {
